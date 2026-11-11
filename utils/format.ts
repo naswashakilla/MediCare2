@@ -12,6 +12,16 @@ export function formatDate(iso: string): string {
   }).format(new Date(Date.UTC(year, month - 1, day)));
 }
 
+export function formatDateLong(iso: string): string {
+  const [year, month, day] = iso.split("-").map(Number);
+  return new Intl.DateTimeFormat("id-ID", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(new Date(Date.UTC(year, month - 1, day)));
+}
+
 export function formatDateTime(iso: string): string {
   return new Intl.DateTimeFormat("id-ID", {
     day: "numeric",

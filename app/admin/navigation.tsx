@@ -9,6 +9,7 @@ const navigation = [
   { href: "/admin/dokter", label: "Data dokter", abbreviation: "DR" },
   { href: "/admin/poli", label: "Data poli", abbreviation: "PL" },
   { href: "/admin/pendaftaran", label: "Pendaftaran", abbreviation: "DF" },
+  { href: "/admin/laporan", label: "Laporan", abbreviation: "LP" },
 ];
 
 export function AdminNavigation() {

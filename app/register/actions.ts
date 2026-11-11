@@ -5,11 +5,17 @@ import { z } from "zod";
 import { createClient } from "@/utils/supabase/server";
 import type { FormState } from "../login/actions";
 
-const registerSchema = z.object({
-  nama_user: z.string().min(3, "Nama minimal 3 karakter").max(50, "Nama maksimal 50 karakter"),
-  email: z.string().email("Format email tidak valid").max(100),
-  password: z.string().min(6, "Password minimal 6 karakter"),
-});
+const registerSchema = z
+  .object({
+    nama_user: z.string().min(3, "Nama minimal 3 karakter").max(50, "Nama maksimal 50 karakter"),
+    email: z.string().email("Format email tidak valid").max(100),
+    password: z.string().min(6, "Password minimal 6 karakter"),
+    konfirmasi: z.string(),
+  })
+  .refine((data) => data.password === data.konfirmasi, {
+    message: "Konfirmasi password tidak cocok",
+    path: ["konfirmasi"],
+  });
 
 export async function register(
   _prev: FormState,
@@ -19,6 +25,7 @@ export async function register(
     nama_user: formData.get("nama_user"),
     email: formData.get("email"),
     password: formData.get("password"),
+    konfirmasi: formData.get("konfirmasi"),
   });
   if (!parsed.success) {
     return { error: parsed.error.issues[0].message };

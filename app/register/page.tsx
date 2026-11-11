@@ -92,6 +92,19 @@ export default function RegisterPage() {
                 placeholder="Minimal 6 karakter"
               />
             </label>
+            <label htmlFor="konfirmasi" className="block text-sm font-medium text-slate-700">
+              Konfirmasi password
+              <input
+                id="konfirmasi"
+                name="konfirmasi"
+                type="password"
+                autoComplete="new-password"
+                minLength={6}
+                required
+                className="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition focus:border-teal-600 focus:bg-white focus:ring-4 focus:ring-teal-600/10"
+                placeholder="Ulangi password"
+              />
+            </label>
 
             <button
               type="submit"

@@ -13,7 +13,7 @@ export default async function AdminLayout({
 
   return (
     <div className="min-h-screen bg-[#f4f8f8] md:flex">
-      <aside className="border-b border-slate-200 bg-white md:sticky md:top-0 md:flex md:h-screen md:w-64 md:shrink-0 md:flex-col md:border-b-0 md:border-r">
+      <aside className="border-b border-slate-200 bg-white print:hidden md:sticky md:top-0 md:flex md:h-screen md:w-64 md:shrink-0 md:flex-col md:border-b-0 md:border-r">
         <div className="flex items-center gap-3 px-5 py-5">
           <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-teal-700 text-lg font-bold text-white shadow-sm shadow-teal-900/20">
             M
@@ -40,7 +40,7 @@ export default async function AdminLayout({
       </aside>
 
       <div className="min-w-0 flex-1">
-        <header className="sticky top-0 z-10 border-b border-slate-200/80 bg-white/90 backdrop-blur">
+        <header className="sticky top-0 z-10 border-b border-slate-200/80 bg-white/90 backdrop-blur print:hidden">
           <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3.5 sm:px-6 lg:px-8">
             <div>
               <p className="text-xs font-medium uppercase tracking-[0.16em] text-slate-400">Panel administrasi</p>

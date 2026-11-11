@@ -31,6 +31,13 @@ const modules = [
     description: "Kelola pendaftaran kunjungan pasien",
     color: "bg-emerald-50 text-emerald-700",
   },
+  {
+    href: "/admin/laporan",
+    abbreviation: "LP",
+    title: "Laporan",
+    description: "Cetak & ekspor laporan pendaftaran",
+    color: "bg-rose-50 text-rose-700",
+  },
 ];
 
 export default async function AdminPage() {
@@ -101,7 +108,7 @@ export default async function AdminPage() {
           </div>
           <p className="text-sm text-slate-500">Pilih modul yang ingin dikelola</p>
         </div>
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
           {modules.map((module) => (
             <Link
               href={module.href}
