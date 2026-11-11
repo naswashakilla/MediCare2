@@ -43,6 +43,12 @@ export default function LoginPage() {
 
         <section className="flex items-center justify-center p-6 sm:p-10 lg:p-14">
           <form action={formAction} className="w-full max-w-sm space-y-5">
+            <Link
+              href="/"
+              className="inline-flex w-fit items-center gap-2 text-sm font-medium text-slate-500 transition hover:text-teal-700"
+            >
+              <span aria-hidden="true">←</span> Kembali ke beranda
+            </Link>
             <div className="mb-8 md:hidden">
               <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-teal-700 text-xl font-bold text-white">M</span>
               <p className="mt-3 text-lg font-bold text-slate-900">MediCare</p>
