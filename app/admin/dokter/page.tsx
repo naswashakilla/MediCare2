@@ -105,7 +105,7 @@ export default async function DokterPage({
           Jam selesai
           <input name="jam_selesai" type="time" required defaultValue={doctor?.jam_selesai?.slice(0, 5) ?? ""} className={inputClass} />
         </label>
-        <button className="rounded-lg bg-blue-700 px-4 py-2 font-semibold text-white hover:bg-blue-800 sm:col-span-2 lg:col-span-3">
+        <button className="rounded-lg bg-teal-700 px-4 py-2 font-semibold text-white hover:bg-teal-800 sm:col-span-2 lg:col-span-3">
           {doctor ? "Simpan perubahan" : "Simpan dokter"}
         </button>
       </form>
@@ -115,7 +115,7 @@ export default async function DokterPage({
   return (
     <main className="mx-auto w-full max-w-5xl space-y-6 px-4 py-6 sm:px-6">
       <div>
-        <Link href="/admin" className="text-sm font-medium text-blue-700 hover:underline">← Dashboard</Link>
+        <Link href="/admin" className="text-sm font-medium text-teal-700 hover:underline">← Dashboard</Link>
         <h1 className="mt-2 text-2xl font-bold text-slate-900">Kelola Dokter</h1>
         <p className="mt-1 text-slate-600">Kelola poli dan jadwal praktik dokter.</p>
       </div>
@@ -174,7 +174,7 @@ export default async function DokterPage({
                   </div>
                   <p className="mt-2 text-xs text-slate-500">{appointmentCount} pendaftaran tercatat</p>
                   <details className="mt-3 border-t border-slate-100 pt-3">
-                    <summary className="cursor-pointer text-sm font-medium text-blue-700">Edit dokter</summary>
+                    <summary className="cursor-pointer text-sm font-medium text-teal-700">Edit dokter</summary>
                     <div className="mt-3">{doctorForm(doctor)}</div>
                   </details>
                 </article>

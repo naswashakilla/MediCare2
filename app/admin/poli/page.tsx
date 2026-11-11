@@ -65,7 +65,7 @@ export default async function PoliPage({
   return (
     <main className="mx-auto w-full max-w-5xl space-y-6 px-4 py-6 sm:px-6">
       <div>
-        <Link href="/admin" className="text-sm font-medium text-blue-700 hover:underline">← Dashboard</Link>
+        <Link href="/admin" className="text-sm font-medium text-teal-700 hover:underline">← Dashboard</Link>
         <h1 className="mt-2 text-2xl font-bold text-slate-900">Kelola Poli</h1>
         <p className="mt-1 text-slate-600">Tambah, cari, ubah, dan hapus data poli.</p>
       </div>
@@ -91,7 +91,7 @@ export default async function PoliPage({
             Keterangan
             <input name="keterangan" maxLength={100} className={inputClass} />
           </label>
-          <button className="rounded-lg bg-blue-700 px-4 py-2 font-semibold text-white hover:bg-blue-800 sm:col-span-2">
+          <button className="rounded-lg bg-teal-700 px-4 py-2 font-semibold text-white hover:bg-teal-800 sm:col-span-2">
             Simpan poli
           </button>
         </form>
@@ -136,7 +136,7 @@ export default async function PoliPage({
                   />
                 </div>
                 <details className="mt-3 border-t border-slate-100 pt-3">
-                  <summary className="cursor-pointer text-sm font-medium text-blue-700">Edit poli</summary>
+                  <summary className="cursor-pointer text-sm font-medium text-teal-700">Edit poli</summary>
                   <form action={savePoli} className="mt-3 grid gap-3 sm:grid-cols-2">
                     <input type="hidden" name="id" value={item.id_poli} />
                     <label className="grid gap-1 text-sm font-medium text-slate-700">
@@ -147,7 +147,7 @@ export default async function PoliPage({
                       Keterangan
                       <input name="keterangan" maxLength={100} defaultValue={item.keterangan ?? ""} className={inputClass} />
                     </label>
-                    <button className="rounded-lg bg-blue-700 px-4 py-2 font-semibold text-white hover:bg-blue-800 sm:col-span-2">
+                    <button className="rounded-lg bg-teal-700 px-4 py-2 font-semibold text-white hover:bg-teal-800 sm:col-span-2">
                       Simpan perubahan
                     </button>
                   </form>

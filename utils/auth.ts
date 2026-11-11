@@ -10,7 +10,7 @@ export async function requireRole(role: "admin" | "pasien") {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("nama_user, role")
+    .select("id_user, nama_user, email, role")
     .eq("id_user", userId)
     .single();
 
