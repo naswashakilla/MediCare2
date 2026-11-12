@@ -193,10 +193,7 @@ export default async function PasienPage() {
       )}
 
       <section>
-        <div className="mb-4">
-          <p className="text-xs font-bold uppercase tracking-[0.18em] text-iced-denim-dark">Layanan kami</p>
-          <h2 className="mt-1 text-xl font-bold tracking-tight text-slate-950">Poli yang tersedia</h2>
-        </div>
+        <h2 className="text-lg font-bold text-navy">Poli yang tersedia</h2>
         <div className="flex flex-wrap gap-2">
           {polis.length === 0 ? (
             <p className="text-sm text-slate-500">Daftar poli belum tersedia.</p>
@@ -204,9 +201,9 @@ export default async function PasienPage() {
             polis.map((poli) => (
               <span
                 key={poli.id_poli}
-                className="inline-flex items-center gap-2 rounded-full border border-iced-denim/20 bg-frost px-3 py-1.5 text-sm font-medium text-iced-denim-dark"
+                className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-navy"
               >
-                <Icon name="building" className="h-3.5 w-3.5" />
+                <Icon name="building" className="h-4 w-4 text-brilliant" />
                 {poli.nama_poli}
               </span>
             ))
