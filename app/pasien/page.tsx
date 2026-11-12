@@ -149,21 +149,18 @@ export default async function PasienPage() {
 
           <section>
             <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
-              <div>
-                <p className="text-xs font-bold uppercase tracking-[0.18em] text-iced-denim-dark">Riwayat terbaru</p>
-                <h2 className="mt-1 text-xl font-bold tracking-tight text-slate-950">Pendaftaran terakhir Anda</h2>
-              </div>
+              <h2 className="text-lg font-bold text-navy">Pendaftaran terakhir</h2>
               <Link
                 href="/pasien/pendaftaran"
-                className="inline-flex items-center gap-1 text-sm font-semibold text-iced-denim-dark transition hover:gap-2"
+                className="text-sm font-semibold text-brilliant hover:underline"
               >
-                Lihat semua →
+                Lihat semua
               </Link>
             </div>
             {latestRegistrations.length === 0 ? (
-              <p className="rounded-2xl border border-dashed border-iced-denim/25 bg-white p-6 text-center text-sm text-slate-600">
+              <p className="rounded-lg border border-dashed border-slate-300 bg-white p-5 text-center text-sm text-slate-600">
                 Belum ada pendaftaran.{" "}
-                <Link href="/pasien/pendaftaran" className="font-medium text-iced-denim-dark hover:underline">
+                <Link href="/pasien/pendaftaran" className="font-medium text-brilliant hover:underline">
                   Daftar kunjungan pertama Anda
                 </Link>
               </p>
@@ -172,19 +169,19 @@ export default async function PasienPage() {
                 {latestRegistrations.map((registration) => (
                   <article
                     key={registration.id_daftar}
-                    className="rounded-2xl border border-slate-200/70 bg-white p-5 shadow-sm shadow-slate-900/[0.02] transition hover:-translate-y-0.5 hover:border-iced-denim/25 hover:shadow-md"
+                    className="rounded-xl border border-slate-200 bg-white p-5"
                   >
                     <div className="flex items-start justify-between gap-2">
-                      <h3 className="font-semibold text-slate-950">
+                      <h3 className="font-semibold text-navy">
                         {registration.dokter?.nama_dokter ?? "Dokter tidak diketahui"}
                       </h3>
-                      <span className={`shrink-0 rounded-full border px-2.5 py-0.5 text-xs font-semibold ${statusStyles[registration.status]}`}>
+                      <span className={`shrink-0 rounded-full border px-2 py-0.5 text-xs font-medium ${statusStyles[registration.status]}`}>
                         {statusLabels[registration.status]}
                       </span>
                     </div>
                     <p className="mt-2 text-sm text-slate-500">{registration.dokter?.poli?.nama_poli ?? "Poli"}</p>
-                    <p className="mt-3 flex items-center gap-2 text-sm font-medium text-slate-700">
-                      <Icon name="calendar" className="h-4 w-4 text-iced-denim" />
+                    <p className="mt-3 flex items-center gap-2 text-sm text-slate-700">
+                      <Icon name="calendar" className="h-4 w-4 text-brilliant" />
                       {formatDate(registration.tgl_kunjungan)}
                     </p>
                   </article>
