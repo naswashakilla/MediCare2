@@ -66,25 +66,10 @@ export default async function PasienPage() {
   ]);
   const latestRegistrations = (latestResult.data ?? []) as unknown as RegistrationSummary[];
 
-  const stats: { title: string; value: number; icon: IconName; tint: string }[] = [
-    {
-      title: "Total pendaftaran",
-      value: totalResult.count ?? 0,
-      icon: "calendar",
-      tint: "bg-frost text-iced-denim-dark",
-    },
-    {
-      title: "Menunggu konfirmasi",
-      value: waitingResult.count ?? 0,
-      icon: "clock",
-      tint: "bg-pistachio/25 text-slate-800",
-    },
-    {
-      title: "Kunjungan mendatang",
-      value: upcomingResult.count ?? 0,
-      icon: "check",
-      tint: "bg-iced-denim/10 text-iced-denim-dark",
-    },
+  const stats: { title: string; value: number; icon: IconName }[] = [
+    { title: "Total pendaftaran", value: totalResult.count ?? 0, icon: "calendar" },
+    { title: "Menunggu konfirmasi", value: waitingResult.count ?? 0, icon: "clock" },
+    { title: "Kunjungan mendatang", value: upcomingResult.count ?? 0, icon: "check" },
   ];
   const errors = [
     patientResult.error,
@@ -152,17 +137,12 @@ export default async function PasienPage() {
         <>
           <section aria-label="Ringkasan pendaftaran" className="grid gap-4 sm:grid-cols-3">
             {stats.map((stat) => (
-              <article
-                key={stat.title}
-                className="rounded-2xl border border-slate-200/70 bg-white p-5 shadow-sm shadow-slate-900/[0.02] transition hover:-translate-y-0.5 hover:shadow-md"
-              >
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-slate-500">{stat.title}</span>
-                  <span className={`flex h-9 w-9 items-center justify-center rounded-xl ${stat.tint}`}>
-                    <Icon name={stat.icon} className="h-4 w-4" />
-                  </span>
+              <article key={stat.title} className="rounded-xl border border-slate-200 bg-white p-5">
+                <div className="flex items-center justify-between text-slate-600">
+                  <span className="text-sm font-medium">{stat.title}</span>
+                  <Icon name={stat.icon} className="h-5 w-5 text-brilliant" />
                 </div>
-                <p className="mt-4 text-3xl font-bold tracking-tight text-slate-950">{stat.value}</p>
+                <p className="mt-4 text-3xl font-bold text-navy">{stat.value}</p>
               </article>
             ))}
           </section>
