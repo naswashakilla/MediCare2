@@ -97,56 +97,50 @@ export default async function PasienPage() {
 
   return (
     <main className="mx-auto w-full max-w-5xl space-y-8 px-4 py-6 sm:px-6 lg:py-8">
-      <section className="relative isolate overflow-hidden rounded-[1.75rem] bg-gradient-to-br from-iced-denim-dark via-iced-denim to-[#2f5f91] px-6 py-8 text-white shadow-xl shadow-iced-denim/20 sm:px-9 sm:py-10">
-        <div aria-hidden="true" className="absolute -right-12 -top-20 -z-10 h-64 w-64 rounded-full border-[34px] border-white/10" />
-        <div aria-hidden="true" className="absolute -bottom-28 right-40 -z-10 h-56 w-56 rounded-full bg-pistachio/20 blur-2xl" />
-
-        <span className="inline-flex items-center gap-2 rounded-full border border-pistachio/40 bg-pistachio/15 px-3.5 py-1.5 text-[10px] font-bold uppercase tracking-[0.18em] text-white">
-          <span aria-hidden="true" className="h-2 w-2 rounded-full bg-pistachio" />
-          Portal pasien MediCare
-        </span>
-        <h1 className="mt-4 max-w-2xl text-3xl font-bold tracking-tight sm:text-4xl">
+      <section className="rounded-xl border border-slate-200 bg-white p-5 sm:p-6">
+        <p className="text-sm font-medium text-brilliant">Portal pasien</p>
+        <h1 className="mt-1 text-2xl font-bold text-navy sm:text-3xl">
           Halo, {account.nama_user}
         </h1>
-        <p className="mt-3 max-w-xl text-sm leading-6 text-white/80 sm:text-base">
+        <p className="mt-2 text-sm leading-6 text-slate-600 sm:text-base">
           Daftarkan kunjungan Anda ke dokter yang tersedia dan pantau statusnya di satu tempat.
         </p>
         <div className="mt-6 flex flex-wrap gap-3">
           <Link
             href="/pasien/pendaftaran"
-            className="inline-flex items-center gap-2 rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-iced-denim-dark shadow-sm transition hover:bg-frost"
+            className="inline-flex items-center gap-2 rounded-lg bg-brilliant px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-navy"
           >
             <Icon name="calendar" className="h-4 w-4" />
             Daftar kunjungan
           </Link>
           <Link
             href="/pasien/profil"
-            className="inline-flex items-center gap-2 rounded-xl border border-white/30 bg-white/10 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-white/20"
+            className="inline-flex items-center gap-2 rounded-lg border border-slate-200 px-4 py-2.5 text-sm font-semibold text-navy transition-colors hover:bg-slate-50"
           >
             <Icon name="users" className="h-4 w-4" />
-            Lihat profil saya
+            Lihat profil
           </Link>
         </div>
       </section>
 
       {errors.length > 0 && (
-        <p role="alert" className="rounded-xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-800">
+        <p role="alert" className="rounded-lg border border-rose-200 bg-rose-50 p-4 text-sm text-rose-800">
           Sebagian data gagal dimuat. Muat ulang halaman untuk mencoba kembali.
         </p>
       )}
 
       {!patient && !patientResult.error && (
-        <section className="rounded-2xl border border-amber-200 bg-amber-50 p-5 sm:p-6">
+        <section className="rounded-lg border border-amber-200 bg-amber-50 p-5">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h2 className="font-semibold text-amber-950">Lengkapi profil Anda</h2>
+              <h2 className="font-semibold text-navy">Lengkapi profil Anda</h2>
               <p className="mt-1 text-sm leading-6 text-amber-900/80">
                 Akun Anda belum terhubung dengan data pasien. Lengkapi profil agar dapat mendaftar kunjungan.
               </p>
             </div>
             <Link
               href="/pasien/profil"
-              className="shrink-0 rounded-xl bg-amber-500 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-amber-600"
+              className="shrink-0 rounded-lg bg-brilliant px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-navy"
             >
               Lengkapi sekarang
             </Link>
