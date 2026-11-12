@@ -178,47 +178,48 @@ export default async function Home() {
 
       <main className="flex-1">
         {/* Hero */}
-        <section id="home" className="scroll-mt-24 bg-ocean">
-          <div className="mx-auto grid max-w-6xl gap-14 px-4 pb-20 pt-12 sm:px-6 sm:pt-16 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-12 lg:px-8 lg:pb-24 lg:pt-20">
-            <div>
-              <span aria-hidden="true" className="block h-1.5 w-16 bg-mango" />
+        <section id="home" className="relative isolate scroll-mt-24 overflow-hidden bg-[#e1e4ff]">
+          <Image
+            src="/Klinik MediCare Modern Berwarna Biru Oranye.png"
+            alt=""
+            fill
+            priority
+            sizes="100vw"
+            className="z-0 object-cover object-[62%_center]"
+          />
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 z-10 bg-gradient-to-r from-white from-0% via-white/70 via-40% to-transparent to-75%"
+          />
 
-              <h1 className="mt-5 text-4xl font-extrabold leading-[1.08] tracking-tight text-navy sm:text-5xl lg:text-6xl">
-                Your Health,
-                <br />
-                <span className="relative inline-block">
-                  <span className="relative z-10 text-brilliant">Our Priority</span>
-                  <span
-                    aria-hidden="true"
-                    className="absolute bottom-1 left-0 h-3 w-full bg-mango/60"
-                  />
-                </span>
+          <div className="relative z-20 mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-24">
+            <div className="max-w-2xl">
+              <h1 className="text-4xl font-bold leading-tight tracking-tight text-navy sm:text-5xl lg:text-6xl">
+                Kesehatan Anda, prioritas kami.
               </h1>
 
               <p className="mt-5 max-w-xl text-base leading-7 text-navy/80 sm:text-lg sm:leading-8">
                 MediCare menghadirkan layanan dokter umum dan spesialis untuk Anda dan keluarga.
-                Proses berobat dibuat lebih mudah, mulai dari melihat jadwal sampai mendaftar
-                kunjungan secara online.
+                Lihat jadwal dokter dan daftar kunjungan secara online dengan mudah.
               </p>
 
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                 <Link
                   href="#services"
-                  className="inline-flex items-center justify-center gap-2 rounded-lg bg-brilliant px-5 py-3.5 text-base font-bold text-white transition-colors hover:bg-navy"
+                  className="inline-flex items-center justify-center gap-2 rounded-lg bg-brilliant px-5 py-3 text-base font-semibold text-white transition-colors hover:bg-navy"
                 >
-                  Our Services
+                  Lihat layanan
                   <Icon name="arrow-right" className="h-5 w-5" />
                 </Link>
                 <Link
                   href={appointmentHref}
-                  className="inline-flex items-center justify-center gap-2 rounded-lg bg-sunset px-5 py-3.5 text-base font-bold text-navy transition-colors hover:bg-mango"
+                  className="inline-flex items-center justify-center gap-2 rounded-lg border border-brilliant bg-white/80 px-5 py-3 text-base font-semibold text-brilliant transition-colors hover:bg-white"
                 >
-                  <Icon name="calendar" className="h-5 w-5" />
-                  Book Appointment
+                  Daftar kunjungan
                 </Link>
               </div>
 
-              <div className="mt-8 flex flex-wrap gap-x-6 gap-y-2 border-t-2 border-navy/10 pt-5 text-sm font-medium text-navy/75">
+              <div className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm font-medium text-navy/75">
                 <span className="inline-flex items-center gap-2">
                   <Icon name="clock" className="h-4 w-4 text-brilliant" />
                   Senin–Sabtu, 08.00–20.00 WIB
@@ -226,30 +227,6 @@ export default async function Home() {
                 <span className="inline-flex items-center gap-2">
                   <Icon name="shield" className="h-4 w-4 text-brilliant" />
                   IGD buka 24 jam
-                </span>
-              </div>
-            </div>
-
-            <div className="relative mx-auto w-full max-w-md lg:max-w-none">
-              <div className="overflow-hidden rounded-2xl border-4 border-white">
-                <Image
-                  src="/images/hero-dokter.jpg"
-                  alt="Dokter MediCare sedang melayani pasien"
-                  width={654}
-                  height={504}
-                  priority
-                  sizes="(min-width: 1024px) 520px, 100vw"
-                  className="aspect-[4/3] w-full object-cover"
-                />
-              </div>
-
-              <div className="absolute -bottom-7 left-4 flex items-center gap-3 rounded-xl border-2 border-navy/10 bg-white px-4 py-3 shadow-sm sm:left-6">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-ocean text-brilliant">
-                  <Icon name="check" className="h-5 w-5" strokeWidth={2.4} />
-                </span>
-                <span>
-                  <span className="block text-sm font-bold text-navy">Pendaftaran online</span>
-                  <span className="block text-xs text-navy/60">Tanpa antre di loket</span>
                 </span>
               </div>
             </div>
