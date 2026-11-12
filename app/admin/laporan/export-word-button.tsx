@@ -41,7 +41,7 @@ ${area.innerHTML}
   return (
     <button
       onClick={exportWord}
-      className="rounded-lg border border-slate-300 bg-white px-4 py-2 font-semibold text-slate-700 transition hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700"
+      className="rounded-xl border border-iced-denim/20 bg-frost px-4 py-2.5 font-semibold text-iced-denim-dark transition hover:border-iced-denim/40 hover:bg-white"
     >
       Ekspor Word (.doc)
     </button>

@@ -16,7 +16,7 @@ type DoctorCount = {
   error?: string;
 };
 
-const inputClass = "w-full rounded-lg border border-slate-300 bg-white px-3 py-2";
+const inputClass = "w-full rounded-xl border border-iced-denim/15 bg-frost/60 px-3.5 py-2.5 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-iced-denim focus:bg-white focus:ring-4 focus:ring-iced-denim/20";
 
 export default async function PoliPage({
   searchParams,
@@ -65,33 +65,33 @@ export default async function PoliPage({
   return (
     <main className="mx-auto w-full max-w-5xl space-y-6 px-4 py-6 sm:px-6">
       <div>
-        <Link href="/admin" className="text-sm font-medium text-teal-700 hover:underline">← Dashboard</Link>
-        <h1 className="mt-2 text-2xl font-bold text-slate-900">Kelola Poli</h1>
-        <p className="mt-1 text-slate-600">Tambah, cari, ubah, dan hapus data poli.</p>
+        <Link href="/admin" className="inline-flex items-center gap-1 text-sm font-medium text-slate-500 transition hover:text-iced-denim-dark">← Dashboard</Link>
+        <h1 className="mt-2 text-2xl font-bold tracking-tight text-slate-950">Kelola Poli</h1>
+        <p className="mt-1 text-sm text-slate-500">Tambah, cari, ubah, dan hapus data poli.</p>
       </div>
 
       {params.notice && (
-        <p role="status" className="break-words rounded-lg bg-blue-50 p-3 text-sm text-blue-900">{params.notice}</p>
+        <p role="status" className="break-words rounded-xl border border-iced-denim/20 bg-frost p-3 text-sm text-iced-denim-dark">{params.notice}</p>
       )}
       {doctorCountErrors.length > 0 && (
-        <p role="alert" className="rounded-lg bg-red-50 p-3 text-sm text-red-800">
+        <p role="alert" className="rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700">
           Gagal memeriksa dokter pada beberapa poli. Penghapusan dinonaktifkan sampai koneksi pulih.{" "}
           {doctorCountErrors[0].error}
         </p>
       )}
 
-      <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
+      <section className="rounded-2xl border border-slate-200/70 bg-white p-5 shadow-sm shadow-slate-900/[0.02] sm:p-6">
         <h2 className="font-semibold text-slate-900">Tambah poli</h2>
         <form action={savePoli} className="mt-4 grid gap-4 sm:grid-cols-2">
-          <label className="grid gap-1 text-sm font-medium text-slate-700">
+          <label className="grid gap-1.5 text-sm font-medium text-slate-700">
             Nama poli
             <input name="nama_poli" required minLength={2} maxLength={30} className={inputClass} />
           </label>
-          <label className="grid gap-1 text-sm font-medium text-slate-700">
+          <label className="grid gap-1.5 text-sm font-medium text-slate-700">
             Keterangan
             <input name="keterangan" maxLength={100} className={inputClass} />
           </label>
-          <button className="rounded-lg bg-teal-700 px-4 py-2 font-semibold text-white hover:bg-teal-800 sm:col-span-2">
+          <button className="rounded-xl bg-iced-denim px-4 py-2.5 font-semibold text-white shadow-sm shadow-iced-denim/25 transition hover:bg-iced-denim-dark sm:col-span-2">
             Simpan poli
           </button>
         </form>
@@ -106,21 +106,21 @@ export default async function PoliPage({
             placeholder="Cari nama poli..."
             className={`${inputClass} min-w-0 flex-1`}
           />
-          <button className="rounded-lg border border-slate-300 bg-white px-4 py-2 font-medium hover:bg-slate-50">Cari</button>
+          <button className="rounded-xl border border-iced-denim/20 bg-frost px-4 py-2.5 font-semibold text-iced-denim-dark transition hover:border-iced-denim/40 hover:bg-white">Cari</button>
         </form>
 
         {error ? (
-          <p role="alert" className="rounded-lg bg-red-50 p-3 text-sm text-red-800">
+          <p role="alert" className="rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700">
             Gagal memuat data poli: {error.message}
           </p>
         ) : poli.length === 0 ? (
-          <p className="rounded-lg border border-dashed border-slate-300 p-6 text-center text-slate-600">
+          <p className="rounded-2xl border border-dashed border-iced-denim/25 bg-white p-6 text-center text-sm text-slate-600">
             {query ? "Poli tidak ditemukan." : "Belum ada data poli."}
           </p>
         ) : (
           <div className="space-y-3">
             {poli.map((item) => (
-              <article key={item.id_poli} className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+              <article key={item.id_poli} className="rounded-2xl border border-slate-200/70 bg-white p-5 shadow-sm shadow-slate-900/[0.02]">
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
                     <h2 className="font-semibold text-slate-900">{item.nama_poli}</h2>
@@ -136,18 +136,18 @@ export default async function PoliPage({
                   />
                 </div>
                 <details className="mt-3 border-t border-slate-100 pt-3">
-                  <summary className="cursor-pointer text-sm font-medium text-teal-700">Edit poli</summary>
+                  <summary className="cursor-pointer text-sm font-medium text-iced-denim-dark">Edit poli</summary>
                   <form action={savePoli} className="mt-3 grid gap-3 sm:grid-cols-2">
                     <input type="hidden" name="id" value={item.id_poli} />
-                    <label className="grid gap-1 text-sm font-medium text-slate-700">
+                    <label className="grid gap-1.5 text-sm font-medium text-slate-700">
                       Nama poli
                       <input name="nama_poli" required minLength={2} maxLength={30} defaultValue={item.nama_poli} className={inputClass} />
                     </label>
-                    <label className="grid gap-1 text-sm font-medium text-slate-700">
+                    <label className="grid gap-1.5 text-sm font-medium text-slate-700">
                       Keterangan
                       <input name="keterangan" maxLength={100} defaultValue={item.keterangan ?? ""} className={inputClass} />
                     </label>
-                    <button className="rounded-lg bg-teal-700 px-4 py-2 font-semibold text-white hover:bg-teal-800 sm:col-span-2">
+                    <button className="rounded-xl bg-iced-denim px-4 py-2.5 font-semibold text-white shadow-sm shadow-iced-denim/25 transition hover:bg-iced-denim-dark sm:col-span-2">
                       Simpan perubahan
                     </button>
                   </form>
@@ -161,8 +161,8 @@ export default async function PoliPage({
           <div className="flex items-center justify-between gap-3 text-sm">
             <span className="text-slate-600">Halaman {page} dari {totalPages} ({total} data)</span>
             <div className="flex gap-2">
-              {page > 1 && <Link href={pageHref(page - 1)} className="rounded-lg border bg-white px-3 py-2">Sebelumnya</Link>}
-              {page < totalPages && <Link href={pageHref(page + 1)} className="rounded-lg border bg-white px-3 py-2">Berikutnya</Link>}
+              {page > 1 && <Link href={pageHref(page - 1)} className="rounded-xl border border-slate-200 bg-white px-3 py-2 font-medium text-slate-600 transition hover:border-iced-denim/30 hover:bg-frost hover:text-iced-denim-dark">Sebelumnya</Link>}
+              {page < totalPages && <Link href={pageHref(page + 1)} className="rounded-xl border border-slate-200 bg-white px-3 py-2 font-medium text-slate-600 transition hover:border-iced-denim/30 hover:bg-frost hover:text-iced-denim-dark">Berikutnya</Link>}
             </div>
           </div>
         )}

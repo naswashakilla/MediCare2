@@ -20,8 +20,8 @@ type Dokter = {
   poli: { nama_poli: string } | null;
 };
 
-const inputClass = "w-full rounded-lg border border-slate-300 bg-white px-3 py-2";
-const labelClass = "grid gap-1 text-sm font-medium text-slate-700";
+const inputClass = "w-full rounded-xl border border-iced-denim/15 bg-frost/60 px-3.5 py-2.5 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-iced-denim focus:bg-white focus:ring-4 focus:ring-iced-denim/20";
+const labelClass = "grid gap-1.5 text-sm font-medium text-slate-700";
 
 export default async function DokterPage({
   searchParams,
@@ -105,7 +105,7 @@ export default async function DokterPage({
           Jam selesai
           <input name="jam_selesai" type="time" required defaultValue={doctor?.jam_selesai?.slice(0, 5) ?? ""} className={inputClass} />
         </label>
-        <button className="rounded-lg bg-teal-700 px-4 py-2 font-semibold text-white hover:bg-teal-800 sm:col-span-2 lg:col-span-3">
+        <button className="rounded-xl bg-iced-denim px-4 py-2.5 font-semibold text-white shadow-sm shadow-iced-denim/25 transition hover:bg-iced-denim-dark sm:col-span-2 lg:col-span-3">
           {doctor ? "Simpan perubahan" : "Simpan dokter"}
         </button>
       </form>
@@ -115,27 +115,27 @@ export default async function DokterPage({
   return (
     <main className="mx-auto w-full max-w-5xl space-y-6 px-4 py-6 sm:px-6">
       <div>
-        <Link href="/admin" className="text-sm font-medium text-teal-700 hover:underline">← Dashboard</Link>
-        <h1 className="mt-2 text-2xl font-bold text-slate-900">Kelola Dokter</h1>
-        <p className="mt-1 text-slate-600">Kelola poli dan jadwal praktik dokter.</p>
+        <Link href="/admin" className="inline-flex items-center gap-1 text-sm font-medium text-slate-500 transition hover:text-iced-denim-dark">← Dashboard</Link>
+        <h1 className="mt-2 text-2xl font-bold tracking-tight text-slate-950">Kelola Dokter</h1>
+        <p className="mt-1 text-sm text-slate-500">Kelola poli dan jadwal praktik dokter.</p>
       </div>
-      {params.notice && <p role="status" className="break-words rounded-lg bg-blue-50 p-3 text-sm text-blue-900">{params.notice}</p>}
+      {params.notice && <p role="status" className="break-words rounded-xl border border-iced-denim/20 bg-frost p-3 text-sm text-iced-denim-dark">{params.notice}</p>}
       {appointmentCountErrors.length > 0 && (
-        <p role="alert" className="rounded-lg bg-red-50 p-3 text-sm text-red-800">
+        <p role="alert" className="rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700">
           Gagal memeriksa pendaftaran beberapa dokter. Penghapusan dinonaktifkan sampai koneksi pulih.{" "}
           {appointmentCountErrors[0].error}
         </p>
       )}
       {poliResult.error && (
-        <p role="alert" className="rounded-lg bg-red-50 p-3 text-sm text-red-800">Gagal memuat daftar poli: {poliResult.error.message}</p>
+        <p role="alert" className="rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700">Gagal memuat daftar poli: {poliResult.error.message}</p>
       )}
       {!poliResult.error && polis.length === 0 && (
-        <p className="rounded-lg bg-amber-50 p-3 text-sm text-amber-900">
+        <p className="rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
           Tambahkan poli terlebih dahulu sebelum membuat data dokter.{" "}
           <Link href="/admin/poli" className="font-semibold underline">Kelola poli</Link>
         </p>
       )}
-      <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
+      <section className="rounded-2xl border border-slate-200/70 bg-white p-5 shadow-sm shadow-slate-900/[0.02] sm:p-6">
         <h2 className="mb-4 font-semibold text-slate-900">Tambah dokter</h2>
         {doctorForm()}
       </section>
@@ -143,12 +143,12 @@ export default async function DokterPage({
       <section className="space-y-4">
         <form action="/admin/dokter" className="flex flex-col gap-2 sm:flex-row">
           <input name="q" defaultValue={query} aria-label="Cari nama dokter" placeholder="Cari nama dokter..." className={`${inputClass} min-w-0 flex-1`} />
-          <button className="rounded-lg border border-slate-300 bg-white px-4 py-2 font-medium hover:bg-slate-50">Cari</button>
+          <button className="rounded-xl border border-iced-denim/20 bg-frost px-4 py-2.5 font-semibold text-iced-denim-dark transition hover:border-iced-denim/40 hover:bg-white">Cari</button>
         </form>
         {doctorResult.error ? (
-          <p role="alert" className="rounded-lg bg-red-50 p-3 text-sm text-red-800">Gagal memuat data dokter: {doctorResult.error.message}</p>
+          <p role="alert" className="rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700">Gagal memuat data dokter: {doctorResult.error.message}</p>
         ) : doctors.length === 0 ? (
-          <p className="rounded-lg border border-dashed border-slate-300 p-6 text-center text-slate-600">
+          <p className="rounded-2xl border border-dashed border-iced-denim/25 bg-white p-6 text-center text-sm text-slate-600">
             {query ? "Dokter tidak ditemukan." : "Belum ada data dokter."}
           </p>
         ) : (
@@ -156,7 +156,7 @@ export default async function DokterPage({
             {doctors.map((doctor) => {
               const appointmentCount = appointmentCountByDoctor.get(doctor.id_dokter) ?? 0;
               return (
-                <article key={doctor.id_dokter} className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+                <article key={doctor.id_dokter} className="rounded-2xl border border-slate-200/70 bg-white p-5 shadow-sm shadow-slate-900/[0.02]">
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div>
                       <h2 className="font-semibold text-slate-900">{doctor.nama_dokter}</h2>
@@ -174,7 +174,7 @@ export default async function DokterPage({
                   </div>
                   <p className="mt-2 text-xs text-slate-500">{appointmentCount} pendaftaran tercatat</p>
                   <details className="mt-3 border-t border-slate-100 pt-3">
-                    <summary className="cursor-pointer text-sm font-medium text-teal-700">Edit dokter</summary>
+                    <summary className="cursor-pointer text-sm font-medium text-iced-denim-dark">Edit dokter</summary>
                     <div className="mt-3">{doctorForm(doctor)}</div>
                   </details>
                 </article>
@@ -186,8 +186,8 @@ export default async function DokterPage({
           <div className="flex items-center justify-between gap-3 text-sm">
             <span className="text-slate-600">Halaman {page} dari {totalPages} ({total} data)</span>
             <div className="flex gap-2">
-              {page > 1 && <Link href={pageHref(page - 1)} className="rounded-lg border bg-white px-3 py-2">Sebelumnya</Link>}
-              {page < totalPages && <Link href={pageHref(page + 1)} className="rounded-lg border bg-white px-3 py-2">Berikutnya</Link>}
+              {page > 1 && <Link href={pageHref(page - 1)} className="rounded-xl border border-slate-200 bg-white px-3 py-2 font-medium text-slate-600 transition hover:border-iced-denim/30 hover:bg-frost hover:text-iced-denim-dark">Sebelumnya</Link>}
+              {page < totalPages && <Link href={pageHref(page + 1)} className="rounded-xl border border-slate-200 bg-white px-3 py-2 font-medium text-slate-600 transition hover:border-iced-denim/30 hover:bg-frost hover:text-iced-denim-dark">Berikutnya</Link>}
             </div>
           </div>
         )}

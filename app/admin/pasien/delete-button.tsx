@@ -22,7 +22,7 @@ export function DeletePasienButton({
       <button
         disabled={disabled}
         title={disabled ? "Pasien yang memiliki riwayat pendaftaran tidak dapat dihapus." : undefined}
-        className="rounded-lg border border-red-300 px-3 py-2 text-sm font-medium text-red-700 hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50"
+        className="rounded-xl border border-rose-200 bg-white px-3 py-2 text-sm font-semibold text-rose-600 transition hover:border-rose-300 hover:bg-rose-50 disabled:cursor-not-allowed disabled:opacity-50"
       >
         Hapus
       </button>

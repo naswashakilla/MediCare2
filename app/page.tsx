@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { createClient } from "@/utils/supabase/server";
 import { Icon, type IconName } from "./_components/landing/icons";
@@ -7,7 +8,7 @@ import { SiteHeader } from "./_components/landing/site-header";
 export const metadata: Metadata = {
   title: "MediCare | Your Health, Our Priority",
   description:
-    "MediCare menghadirkan layanan rumah sakit dan poliklinik yang modern, nyaman, dan terpercaya untuk Anda dan keluarga.",
+    "MediCare adalah klinik dengan layanan dokter umum dan spesialis untuk Anda dan keluarga.",
 };
 
 type Poli = {
@@ -26,39 +27,6 @@ type Doctor = {
   poli: { nama_poli: string } | null;
 };
 
-const facilities: { icon: IconName; title: string; description: string }[] = [
-  {
-    icon: "building",
-    title: "Ruang tunggu nyaman",
-    description: "Area tunggu yang bersih, terang, dan nyaman untuk seluruh pengunjung.",
-  },
-  {
-    icon: "flask",
-    title: "Laboratorium",
-    description: "Pemeriksaan laboratorium dengan proses cepat dan hasil yang akurat.",
-  },
-  {
-    icon: "pill",
-    title: "Farmasi",
-    description: "Layanan obat dan konsultasi farmasi langsung di area rumah sakit.",
-  },
-  {
-    icon: "scan",
-    title: "Radiologi",
-    description: "Pemeriksaan penunjang dengan peralatan diagnostik yang modern.",
-  },
-  {
-    icon: "activity",
-    title: "IGD 24 jam",
-    description: "Tim medis siaga setiap saat untuk kebutuhan darurat Anda.",
-  },
-  {
-    icon: "car",
-    title: "Parkir luas",
-    description: "Area parkir yang aman dan mudah diakses untuk kendaraan Anda.",
-  },
-];
-
 const contact = {
   address: "Jl. Kesehatan No. 88, Jakarta Selatan, DKI Jakarta 12345",
   phone: "(021) 555-0123",
@@ -66,14 +34,36 @@ const contact = {
   email: "halo@medicare.co.id",
 };
 
-const mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent("Jl. Kesehatan No. 88 Jakarta Selatan")}`;
+const mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+  "Jl. Kesehatan No. 88 Jakarta Selatan",
+)}`;
+
+const doctorAccents = [
+  "border-t-sunset",
+  "border-t-mango",
+  "border-t-brilliant",
+  "border-t-ocean",
+];
+
+const serviceTints = [
+  "bg-sunset/10 text-sunset",
+  "bg-brilliant/10 text-brilliant",
+  "bg-mango/25 text-navy",
+  "bg-ocean text-brilliant",
+];
+
+const steps = [
+  "Masuk atau daftar akun MediCare.",
+  "Pilih dokter dan tanggal kunjungan.",
+  "Datang ke klinik sesuai jadwal.",
+];
 
 function formatSchedule(doctor: Doctor) {
   const start = doctor.jam_mulai?.slice(0, 5);
   const end = doctor.jam_selesai?.slice(0, 5);
 
   if (!start || !end) return "Jadwal menyusul";
-  return `${start} – ${end} WIB`;
+  return `${start} - ${end} WIB`;
 }
 
 function doctorInitials(name: string) {
@@ -118,15 +108,23 @@ function SectionHeading({
   light?: boolean;
 }) {
   return (
-    <div>
-      <p className={`text-xs font-bold uppercase tracking-[0.2em] ${light ? "text-pistachio" : "text-iced-denim-dark"}`}>
+    <div className="max-w-2xl">
+      <p
+        className={`text-sm font-bold uppercase tracking-[0.14em] ${
+          light ? "text-mango" : "text-brilliant"
+        }`}
+      >
         {eyebrow}
       </p>
-      <h2 className={`mt-3 text-3xl font-bold tracking-tight sm:text-4xl ${light ? "text-white" : "text-slate-950"}`}>
+      <h2
+        className={`mt-2 text-3xl font-bold tracking-tight sm:text-4xl ${
+          light ? "text-white" : "text-navy"
+        }`}
+      >
         {title}
       </h2>
       {description && (
-        <p className={`mt-4 max-w-2xl text-sm leading-7 sm:text-base ${light ? "text-white/75" : "text-slate-600"}`}>
+        <p className={`mt-3 text-base leading-7 ${light ? "text-white/80" : "text-navy/70"}`}>
           {description}
         </p>
       )}
@@ -163,8 +161,9 @@ export default async function Home() {
   const polis = (poliResult.data ?? []) as Poli[];
   const doctors = (doctorResult.data ?? []) as unknown as Doctor[];
   const hasDataError = Boolean(poliResult.error || doctorResult.error);
-  const doctorCountLabel = doctors.length > 0 ? `${doctors.length}+` : "—";
-  const poliCountLabel = polis.length > 0 ? `${polis.length}` : "—";
+
+  const doctorCount = doctors.length > 0 ? String(doctors.length) : "—";
+  const poliCount = polis.length > 0 ? String(polis.length) : "—";
 
   const appointmentHref =
     dashboardHref === "/pasien"
@@ -172,355 +171,220 @@ export default async function Home() {
       : dashboardHref === "/admin"
         ? "/admin/pendaftaran"
         : "/login";
-  const accountHref = dashboardHref ?? "/login";
-  const accountLabel = dashboardHref ? "Buka Dashboard" : "Login";
 
   return (
     <div className="flex min-h-screen flex-col bg-white">
       <SiteHeader dashboardHref={dashboardHref} appointmentHref={appointmentHref} />
 
       <main className="flex-1">
-        <section id="home" className="relative scroll-mt-24 overflow-hidden bg-white">
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute -left-24 top-24 h-72 w-72 rounded-full bg-pistachio/20 blur-3xl"
-          />
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute -right-28 top-10 h-96 w-96 rounded-full bg-iced-denim/15 blur-3xl"
-          />
+        {/* Hero */}
+        <section id="home" className="scroll-mt-24 bg-ocean">
+          <div className="mx-auto grid max-w-6xl gap-14 px-4 pb-20 pt-12 sm:px-6 sm:pt-16 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-12 lg:px-8 lg:pb-24 lg:pt-20">
+            <div>
+              <span aria-hidden="true" className="block h-1.5 w-16 bg-mango" />
 
-          <div className="relative mx-auto grid max-w-7xl gap-14 px-4 pb-20 pt-14 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-12 lg:px-8 lg:pb-28 lg:pt-20">
-            <div className="relative z-10">
-              <span className="inline-flex items-center gap-2 rounded-full border border-pistachio/40 bg-pistachio/15 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.18em] text-slate-800">
-                <span aria-hidden="true" className="h-2 w-2 rounded-full bg-pistachio" />
-                Poliklinik MediCare · Melayani dengan sepenuh hati
-              </span>
-
-              <h1 className="mt-6 max-w-2xl text-5xl font-bold leading-[1.05] tracking-tight text-slate-950 sm:text-6xl lg:text-7xl">
-                Your Health,{" "}
-                <span className="text-iced-denim-dark">Our Priority</span>
+              <h1 className="mt-5 text-4xl font-extrabold leading-[1.08] tracking-tight text-navy sm:text-5xl lg:text-6xl">
+                Your Health,
+                <br />
+                <span className="relative inline-block">
+                  <span className="relative z-10 text-brilliant">Our Priority</span>
+                  <span
+                    aria-hidden="true"
+                    className="absolute bottom-1 left-0 h-3 w-full bg-mango/60"
+                  />
+                </span>
               </h1>
 
-              <div aria-hidden="true" className="mt-6 h-1.5 w-24 rounded-full bg-pistachio" />
-
-              <p className="mt-6 max-w-xl text-base leading-8 text-slate-600 sm:text-lg">
-                MediCare menghadirkan layanan kesehatan yang hangat, cepat, dan terpercaya untuk Anda dan
-                keluarga. Dari konsultasi umum hingga perawatan spesialis, semuanya dalam satu tempat.
+              <p className="mt-5 max-w-xl text-base leading-7 text-navy/80 sm:text-lg sm:leading-8">
+                MediCare menghadirkan layanan dokter umum dan spesialis untuk Anda dan keluarga.
+                Proses berobat dibuat lebih mudah, mulai dari melihat jadwal sampai mendaftar
+                kunjungan secara online.
               </p>
 
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                 <Link
+                  href="#services"
+                  className="inline-flex items-center justify-center gap-2 rounded-lg bg-brilliant px-5 py-3.5 text-base font-bold text-white transition-colors hover:bg-navy"
+                >
+                  Our Services
+                  <Icon name="arrow-right" className="h-5 w-5" />
+                </Link>
+                <Link
                   href={appointmentHref}
-                  className="group inline-flex items-center justify-center gap-2 rounded-2xl bg-pistachio px-6 py-3.5 text-sm font-bold text-slate-950 shadow-lg shadow-slate-900/10 transition hover:-translate-y-0.5 hover:bg-[#aab34a]"
+                  className="inline-flex items-center justify-center gap-2 rounded-lg bg-sunset px-5 py-3.5 text-base font-bold text-navy transition-colors hover:bg-mango"
                 >
                   <Icon name="calendar" className="h-5 w-5" />
                   Book Appointment
-                  <Icon
-                    name="arrow-right"
-                    className="h-4 w-4 transition-transform group-hover:translate-x-1"
-                  />
-                </Link>
-                <Link
-                  href={accountHref}
-                  className="inline-flex items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white px-6 py-3.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-iced-denim/30 hover:bg-frost hover:text-iced-denim-dark"
-                >
-                  <Icon name={dashboardHref ? "users" : "shield"} className="h-5 w-5" />
-                  {accountLabel}
                 </Link>
               </div>
 
-              <dl className="mt-10 grid max-w-lg grid-cols-3 gap-4 border-t border-slate-200 pt-6">
-                <div>
-                  <dd className="text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">
-                    {doctorCountLabel}
-                  </dd>
-                  <dt className="mt-1 text-xs font-medium text-slate-500">Dokter spesialis</dt>
-                </div>
-                <div>
-                  <dd className="text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">
-                    {poliCountLabel}
-                  </dd>
-                  <dt className="mt-1 text-xs font-medium text-slate-500">Layanan poli</dt>
-                </div>
-                <div>
-                  <dd className="text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">24/7</dd>
-                  <dt className="mt-1 text-xs font-medium text-slate-500">IGD siaga</dt>
-                </div>
-              </dl>
+              <div className="mt-8 flex flex-wrap gap-x-6 gap-y-2 border-t-2 border-navy/10 pt-5 text-sm font-medium text-navy/75">
+                <span className="inline-flex items-center gap-2">
+                  <Icon name="clock" className="h-4 w-4 text-brilliant" />
+                  Senin–Sabtu, 08.00–20.00 WIB
+                </span>
+                <span className="inline-flex items-center gap-2">
+                  <Icon name="shield" className="h-4 w-4 text-brilliant" />
+                  IGD buka 24 jam
+                </span>
+              </div>
             </div>
 
-            <div className="relative mx-auto w-full max-w-lg lg:max-w-none">
-              <div
-                aria-hidden="true"
-                className="absolute -right-4 -top-8 h-40 w-40 rounded-full bg-pistachio/40 blur-2xl"
-              />
-              <div
-                aria-hidden="true"
-                className="absolute -bottom-10 -left-6 h-48 w-48 rounded-full bg-iced-denim/20 blur-2xl"
-              />
-
-              <div className="relative overflow-hidden rounded-[2.5rem] border border-white bg-gradient-to-br from-frost via-white to-frost p-5 shadow-2xl shadow-slate-900/10 sm:p-8">
-                <div
-                  aria-hidden="true"
-                  className="absolute right-6 top-6 h-24 w-24 rounded-full border-[14px] border-iced-denim/10"
+            <div className="relative mx-auto w-full max-w-md lg:max-w-none">
+              <div className="overflow-hidden rounded-2xl border-4 border-white">
+                <Image
+                  src="/images/hero-dokter.jpg"
+                  alt="Dokter MediCare sedang melayani pasien"
+                  width={654}
+                  height={504}
+                  priority
+                  sizes="(min-width: 1024px) 520px, 100vw"
+                  className="aspect-[4/3] w-full object-cover"
                 />
-
-                <div className="relative rounded-[1.75rem] bg-gradient-to-br from-iced-denim-dark via-iced-denim to-[#6aa8e2] p-6 text-white shadow-xl shadow-slate-900/10 sm:p-7">
-                  <div className="flex items-center justify-between gap-4">
-                    <span className="text-[10px] font-bold uppercase tracking-[0.24em] text-white/70">
-                      MediCare Care
-                    </span>
-                    <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white/15">
-                      <Icon name="heart-pulse" className="h-5 w-5 text-pistachio" />
-                    </span>
-                  </div>
-
-                  <p className="mt-6 text-2xl font-bold leading-snug sm:text-3xl">
-                    Kesehatan Anda,
-                    <br />
-                    prioritas kami.
-                  </p>
-                  <p className="mt-3 max-w-xs text-sm leading-6 text-white/75">
-                    Dokter berpengalaman dan fasilitas modern untuk perawatan yang lebih tenang.
-                  </p>
-
-                  <div className="mt-6 flex items-center gap-3 rounded-2xl border border-white/10 bg-white/10 p-3 backdrop-blur">
-                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-pistachio font-bold text-slate-950">
-                      M
-                    </span>
-                    <span>
-                      <span className="block text-sm font-semibold">Jadwal konsultasi</span>
-                      <span className="mt-0.5 block text-xs text-white/70">
-                        Senin–Sabtu, 08.00–20.00 WIB
-                      </span>
-                    </span>
-                  </div>
-                </div>
-
-                <div className="relative mt-4 grid grid-cols-2 gap-3">
-                  <div className="rounded-2xl border border-white bg-white p-4 shadow-sm">
-                    <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-frost text-iced-denim-dark">
-                      <Icon name="users" className="h-4 w-4" />
-                    </span>
-                    <p className="mt-3 text-2xl font-bold text-slate-950">{doctorCountLabel}</p>
-                    <p className="text-xs text-slate-500">Dokter spesialis</p>
-                  </div>
-                  <div className="rounded-2xl border border-white bg-white p-4 shadow-sm">
-                    <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-pistachio/20 text-slate-800">
-                      <Icon name="stethoscope" className="h-4 w-4" />
-                    </span>
-                    <p className="mt-3 text-2xl font-bold text-slate-950">{poliCountLabel}</p>
-                    <p className="text-xs text-slate-500">Layanan poli</p>
-                  </div>
-                </div>
               </div>
 
-              <div className="absolute -bottom-5 left-4 hidden items-center gap-2 rounded-2xl border border-slate-100 bg-white px-4 py-3 shadow-xl shadow-slate-900/10 sm:flex">
-                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-pistachio/20 text-slate-800">
-                  <Icon name="check" className="h-4 w-4" />
+              <div className="absolute -bottom-7 left-4 flex items-center gap-3 rounded-xl border-2 border-navy/10 bg-white px-4 py-3 shadow-sm sm:left-6">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-ocean text-brilliant">
+                  <Icon name="check" className="h-5 w-5" strokeWidth={2.4} />
                 </span>
-                <span className="text-xs font-semibold text-slate-700">Pendaftaran online mudah</span>
+                <span>
+                  <span className="block text-sm font-bold text-navy">Pendaftaran online</span>
+                  <span className="block text-xs text-navy/60">Tanpa antre di loket</span>
+                </span>
               </div>
             </div>
           </div>
         </section>
 
-        <section id="about" className="scroll-mt-24 border-y border-slate-100 bg-white py-20 sm:py-24">
-          <div className="mx-auto grid max-w-7xl gap-12 px-4 sm:px-6 lg:grid-cols-2 lg:items-center lg:gap-16 lg:px-8">
-            <div className="relative mx-auto w-full max-w-lg lg:mx-0">
-              <div
-                aria-hidden="true"
-                className="absolute -left-6 -top-6 h-36 w-36 rounded-full bg-pistachio/30 blur-2xl"
-              />
-              <div className="relative overflow-hidden rounded-[2rem] bg-frost p-5 sm:p-7">
-                <div
-                  aria-hidden="true"
-                  className="absolute -right-8 -top-8 h-28 w-28 rounded-full bg-iced-denim/10"
+        {/* About Us */}
+        <section id="about" className="scroll-mt-24 bg-white py-16 sm:py-20">
+          <div className="mx-auto grid max-w-6xl gap-12 px-4 sm:px-6 lg:grid-cols-2 lg:items-center lg:gap-14 lg:px-8">
+            <div className="relative">
+              <div className="overflow-hidden rounded-2xl border-4 border-ocean">
+                <Image
+                  src="/images/rumah-sakit.jpg"
+                  alt="Ruang pelayanan MediCare"
+                  width={1200}
+                  height={800}
+                  sizes="(min-width: 1024px) 560px, 100vw"
+                  className="aspect-[3/2] w-full object-cover"
                 />
-                <div className="relative grid grid-cols-2 gap-3">
-                  <div className="col-span-2 rounded-2xl bg-white p-5 shadow-sm">
-                    <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-pistachio/20 text-slate-900">
-                      <Icon name="heart-pulse" className="h-5 w-5" />
-                    </span>
-                    <p className="mt-4 text-sm font-bold text-slate-950">Perawatan dengan sepenuh hati</p>
-                    <p className="mt-1 text-xs leading-5 text-slate-500">
-                      Setiap pasien didampingi oleh tim yang ramah dan profesional.
-                    </p>
-                  </div>
-                  <div className="rounded-2xl bg-iced-denim p-5 text-white shadow-sm">
-                    <p className="text-3xl font-bold">15+</p>
-                    <p className="mt-1 text-xs text-white/80">Tahun melayani</p>
-                  </div>
-                  <div className="rounded-2xl bg-pistachio p-5 text-slate-950 shadow-sm">
-                    <p className="text-3xl font-bold">24/7</p>
-                    <p className="mt-1 text-xs text-slate-800">IGD siaga</p>
-                  </div>
-                  <div className="col-span-2 rounded-2xl border border-iced-denim/15 bg-white p-5 shadow-sm">
-                    <div className="flex items-start gap-3">
-                      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-frost text-iced-denim-dark">
-                        <Icon name="shield" className="h-4 w-4" />
-                      </span>
-                      <div>
-                        <p className="text-sm font-semibold text-slate-950">Aman dan terpercaya</p>
-                        <p className="mt-1 text-xs leading-5 text-slate-500">
-                          Data pasien dikelola dengan aman melalui sistem autentikasi MediCare.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+              </div>
+              <div className="absolute -bottom-6 right-3 hidden rounded-xl bg-brilliant px-5 py-4 text-white shadow-sm sm:block">
+                <p className="text-2xl font-extrabold">24/7</p>
+                <p className="text-xs text-white/80">IGD siap membantu</p>
               </div>
             </div>
 
             <div>
               <SectionHeading
                 eyebrow="About Us"
-                title="Rumah sakit yang tumbuh bersama masyarakat"
-                description="MediCare hadir sebagai mitra kesehatan keluarga dengan pelayanan yang manusiawi, fasilitas yang lengkap, dan tenaga medis yang berdedikasi."
+                title="Klinik yang dekat dengan keluarga"
+                description="MediCare menyediakan layanan kesehatan untuk seluruh anggota keluarga. Kami memiliki dokter umum dan dokter spesialis yang siap membantu Anda."
               />
-              <p className="mt-5 text-sm leading-7 text-slate-600 sm:text-base">
-                Kami percaya bahwa pengalaman berobat yang baik dimulai dari rasa nyaman. Karena itu,
-                MediCare memadukan pelayanan medis profesional dengan suasana yang hangat, proses
-                pendaftaran yang mudah, dan komunikasi yang jelas untuk setiap pasien.
+              <p className="mt-4 text-base leading-7 text-navy/70">
+                Kami ingin proses berobat menjadi lebih mudah, mulai dari melihat jadwal dokter,
+                mendaftar kunjungan secara online, sampai datang ke klinik sesuai jadwal.
               </p>
-              <ul className="mt-7 grid gap-3 sm:grid-cols-2">
+
+              <ul className="mt-6 grid gap-3 sm:grid-cols-2">
                 {[
-                  "Dokter berpengalaman",
                   "Pendaftaran online",
-                  "Fasilitas modern",
-                  "Layanan ramah",
+                  "Dokter berpengalaman",
+                  "Fasilitas memadai",
+                  "Lokasi mudah dijangkau",
                 ].map((item) => (
-                  <li key={item} className="flex items-center gap-2 text-sm font-medium text-slate-700">
-                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-pistachio/20 text-slate-800">
-                      <Icon name="check" className="h-3.5 w-3.5" strokeWidth={2.4} />
+                  <li key={item} className="flex items-center gap-2.5 text-sm font-medium text-navy sm:text-base">
+                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-ocean text-brilliant">
+                      <Icon name="check" className="h-3.5 w-3.5" strokeWidth={2.6} />
                     </span>
                     {item}
                   </li>
                 ))}
               </ul>
-              <Link
-                href="#doctors"
-                className="mt-8 inline-flex items-center gap-2 text-sm font-semibold text-iced-denim-dark transition hover:gap-3"
-              >
-                Kenali dokter kami
-                <Icon name="arrow-right" className="h-4 w-4" />
-              </Link>
+
+              <dl className="mt-8 grid grid-cols-3 gap-2 sm:gap-3">
+                <div className="rounded-lg bg-brilliant p-4 text-white">
+                  <dd className="text-2xl font-extrabold sm:text-3xl">{doctorCount}</dd>
+                  <dt className="mt-1 text-xs font-medium text-white/80 sm:text-sm">Dokter</dt>
+                </div>
+                <div className="rounded-lg bg-mango p-4 text-navy">
+                  <dd className="text-2xl font-extrabold sm:text-3xl">{poliCount}</dd>
+                  <dt className="mt-1 text-xs font-medium text-navy/75 sm:text-sm">Layanan</dt>
+                </div>
+                <div className="rounded-lg bg-ocean p-4 text-navy">
+                  <dd className="text-2xl font-extrabold sm:text-3xl">24/7</dd>
+                  <dt className="mt-1 text-xs font-medium text-navy/75 sm:text-sm">IGD</dt>
+                </div>
+              </dl>
             </div>
           </div>
         </section>
 
-        <section id="services" className="scroll-mt-24 bg-frost/70 py-20 sm:py-24">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <SectionHeading
-              eyebrow="Services"
-              title="Layanan medis untuk seluruh keluarga"
-              description="Pilih layanan yang sesuai dengan kebutuhan Anda. Setiap poli didukung oleh dokter dan tenaga medis yang kompeten di bidangnya."
-            />
-
-            {polis.length > 0 ? (
-              <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {polis.map((poli) => (
-                  <article
-                    key={poli.id_poli}
-                    className="group flex flex-col rounded-2xl border border-white bg-white p-6 shadow-sm shadow-slate-900/[0.02] transition hover:-translate-y-1 hover:border-iced-denim/20 hover:shadow-lg hover:shadow-slate-900/[0.06]"
-                  >
-                    <div className="flex items-start justify-between gap-3">
-                      <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-frost text-iced-denim-dark transition group-hover:bg-iced-denim group-hover:text-white">
-                        <Icon name={serviceIcon(poli.nama_poli)} className="h-6 w-6" />
-                      </span>
-                      <span className="rounded-full bg-pistachio/15 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-slate-700">
-                        Poli
-                      </span>
-                    </div>
-                    <h3 className="mt-5 text-lg font-bold text-slate-950">{poli.nama_poli}</h3>
-                    <p className="mt-2 flex-1 text-sm leading-6 text-slate-500">
-                      {poli.keterangan || "Layanan pemeriksaan dan konsultasi kesehatan."}
-                    </p>
-                    <a
-                      href="#doctors"
-                      className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-iced-denim-dark transition-all hover:gap-3"
-                    >
-                      Lihat dokter
-                      <Icon name="arrow-right" className="h-4 w-4" />
-                    </a>
-                  </article>
-                ))}
-              </div>
-            ) : (
-              <p className="mt-12 rounded-2xl border border-dashed border-iced-denim/30 bg-white/70 p-8 text-center text-sm text-slate-600">
-                {hasDataError
-                  ? "Data layanan belum dapat dimuat. Silakan muat ulang halaman."
-                  : "Belum ada layanan yang ditambahkan admin."}
-              </p>
-            )}
-          </div>
-        </section>
-
-        <section id="doctors" className="scroll-mt-24 bg-white py-20 sm:py-24">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+        {/* Our Doctors */}
+        <section
+          id="doctors"
+          className="scroll-mt-24 bg-brilliant py-16 text-white sm:py-20"
+        >
+          <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+            <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
               <SectionHeading
-                eyebrow="Doctors"
-                title="Dokter dan spesialisasi"
-                description="Kenali dokter yang siap membantu Anda. Jadwal praktik dapat berubah, silakan konfirmasi melalui pendaftaran kunjungan."
+                light
+                eyebrow="Our Doctors"
+                title="Dokter yang siap melayani"
+                description="Berikut dokter yang terdaftar di MediCare. Jadwal praktik dapat berubah, silakan konfirmasi saat mendaftar."
               />
               <Link
                 href={appointmentHref}
-                className="inline-flex shrink-0 items-center justify-center gap-2 rounded-2xl bg-iced-denim px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-iced-denim-dark"
+                className="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg bg-mango px-5 py-3 text-base font-bold text-navy transition-colors hover:bg-white"
               >
-                <Icon name="calendar" className="h-4 w-4" />
+                <Icon name="calendar" className="h-5 w-5" />
                 Book Appointment
               </Link>
             </div>
 
             {doctors.length > 0 ? (
-              <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {doctors.map((doctor) => (
+              <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {doctors.map((doctor, index) => (
                   <article
                     key={doctor.id_dokter}
-                    className="flex flex-col rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm shadow-slate-900/[0.02] transition hover:-translate-y-1 hover:border-iced-denim/30 hover:shadow-lg hover:shadow-slate-900/[0.06]"
+                    className={`rounded-lg border-t-4 bg-white p-5 text-navy ${
+                      doctorAccents[index % doctorAccents.length]
+                    }`}
                   >
                     <div className="flex items-start gap-4">
-                      <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-frost to-iced-denim/20 text-lg font-bold text-iced-denim-dark">
+                      <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-ocean text-lg font-extrabold text-brilliant">
                         {doctorInitials(doctor.nama_dokter)}
                       </span>
                       <div className="min-w-0">
-                        <h3 className="truncate font-bold text-slate-950">{doctor.nama_dokter}</h3>
-                        <p className="mt-1 text-sm font-semibold text-iced-denim-dark">
+                        <h3 className="truncate text-lg font-bold text-navy">
+                          {doctor.nama_dokter}
+                        </h3>
+                        <p className="mt-1 text-sm font-semibold text-brilliant">
                           {doctor.spesialis || "Dokter umum"}
-                        </p>
-                        <p className="mt-1 text-xs text-slate-500">
-                          {doctor.poli?.nama_poli ?? "Poli MediCare"}
                         </p>
                       </div>
                     </div>
 
-                    <dl className="mt-5 space-y-2 border-t border-slate-100 pt-4 text-xs text-slate-600">
-                      <div className="flex items-center gap-2">
-                        <Icon name="calendar" className="h-4 w-4 shrink-0 text-iced-denim" />
-                        <dt className="sr-only">Hari praktik</dt>
-                        <dd>{doctor.hari_praktik || "Jadwal menyusul"}</dd>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Icon name="clock" className="h-4 w-4 shrink-0 text-iced-denim" />
-                        <dt className="sr-only">Jam praktik</dt>
-                        <dd>{formatSchedule(doctor)}</dd>
-                      </div>
-                    </dl>
-
-                    <Link
-                      href={appointmentHref}
-                      className="mt-5 flex items-center justify-center gap-2 rounded-xl border border-iced-denim/20 bg-frost/60 px-4 py-2.5 text-sm font-semibold text-iced-denim-dark transition hover:border-iced-denim hover:bg-iced-denim hover:text-white"
-                    >
-                      Buat janji
-                      <Icon name="arrow-right" className="h-4 w-4" />
-                    </Link>
+                    <div className="mt-4 border-t-2 border-ocean pt-4 text-sm text-navy/70">
+                      <p className="flex items-start gap-2">
+                        <Icon name="building" className="mt-0.5 h-4 w-4 shrink-0 text-brilliant" />
+                        {doctor.poli?.nama_poli ?? "Poli MediCare"}
+                      </p>
+                      <p className="mt-2 flex items-start gap-2">
+                        <Icon name="calendar" className="mt-0.5 h-4 w-4 shrink-0 text-brilliant" />
+                        {doctor.hari_praktik || "Jadwal menyusul"}
+                      </p>
+                      <p className="mt-2 flex items-center gap-2">
+                        <Icon name="clock" className="h-4 w-4 shrink-0 text-brilliant" />
+                        {formatSchedule(doctor)}
+                      </p>
+                    </div>
                   </article>
                 ))}
               </div>
             ) : (
-              <p className="mt-12 rounded-2xl border border-dashed border-iced-denim/30 bg-frost/40 p-8 text-center text-sm text-slate-600">
+              <p className="mt-10 rounded-lg border-2 border-dashed border-white/30 p-8 text-center text-base text-white/80">
                 {hasDataError
                   ? "Data dokter belum dapat dimuat. Silakan muat ulang halaman."
                   : "Belum ada dokter yang ditambahkan admin."}
@@ -529,113 +393,130 @@ export default async function Home() {
           </div>
         </section>
 
-        <section id="facilities" className="scroll-mt-24 bg-white pb-20 sm:pb-24">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="rounded-[2rem] bg-frost p-6 sm:p-10 lg:p-12">
-              <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-14">
-                <SectionHeading
-                  eyebrow="Facilities"
-                  title="Fasilitas yang mendukung kenyamanan Anda"
-                  description="Mulai dari ruang tunggu hingga layanan penunjang medis, MediCare menyiapkan fasilitas yang membuat setiap kunjungan terasa lebih mudah."
-                />
+        {/* Our Services */}
+        <section id="services" className="scroll-mt-24 bg-ocean py-16 sm:py-20">
+          <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+            <SectionHeading
+              eyebrow="Our Services"
+              title="Layanan yang tersedia"
+              description="Layanan di MediCare disesuaikan dengan poli yang tersedia di klinik. Pilih layanan yang sesuai dengan kebutuhan Anda."
+            />
 
-                <div className="grid gap-4 sm:grid-cols-2">
-                  {facilities.map((facility) => (
-                    <article key={facility.title} className="rounded-2xl bg-white p-5 shadow-sm">
-                      <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-pistachio/20 text-slate-900">
-                        <Icon name={facility.icon} className="h-5 w-5" />
+            {polis.length > 0 ? (
+              <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {polis.map((poli, index) => (
+                  <article
+                    key={poli.id_poli}
+                    className="rounded-lg border-2 border-white bg-white p-5"
+                  >
+                    <span
+                      className={`flex h-12 w-12 items-center justify-center rounded-lg ${
+                        serviceTints[index % serviceTints.length]
+                      }`}
+                    >
+                      <Icon name={serviceIcon(poli.nama_poli)} className="h-6 w-6" />
+                    </span>
+                    <h3 className="mt-4 text-lg font-bold text-navy">{poli.nama_poli}</h3>
+                    <p className="mt-2 text-sm leading-6 text-navy/70">
+                      {poli.keterangan || "Layanan pemeriksaan dan konsultasi kesehatan."}
+                    </p>
+                  </article>
+                ))}
+              </div>
+            ) : (
+              <p className="mt-10 rounded-lg border-2 border-dashed border-brilliant/25 bg-white p-8 text-center text-base text-navy/60">
+                {hasDataError
+                  ? "Data layanan belum dapat dimuat. Silakan muat ulang halaman."
+                  : "Belum ada layanan yang ditambahkan admin."}
+              </p>
+            )}
+          </div>
+        </section>
+
+        {/* Appointment */}
+        <section id="appointment" className="scroll-mt-24 bg-white py-16 sm:py-20">
+          <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+            <div className="rounded-2xl bg-mango px-6 py-8 sm:px-9 sm:py-10 lg:px-12">
+              <div className="grid gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:items-center lg:gap-12">
+                <div>
+                  <SectionHeading
+                    eyebrow="Appointment"
+                    title="Buat janji kunjungan"
+                    description="Daftarkan kunjungan Anda secara online agar proses di klinik lebih cepat. Masuk ke akun MediCare, pilih dokter, lalu tentukan tanggal kunjungan."
+                  />
+
+                  <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+                    <Link
+                      href={dashboardHref ? appointmentHref : "/login"}
+                      className="inline-flex items-center justify-center gap-2 rounded-lg bg-brilliant px-5 py-3.5 text-base font-bold text-white transition-colors hover:bg-navy"
+                    >
+                      {dashboardHref ? "Buka Pendaftaran" : "Book Appointment"}
+                      <Icon name="arrow-right" className="h-5 w-5" />
+                    </Link>
+                    <Link
+                      href={dashboardHref ?? "/register"}
+                      className="inline-flex items-center justify-center gap-2 rounded-lg bg-white px-5 py-3.5 text-base font-bold text-navy transition-colors hover:bg-ocean"
+                    >
+                      {dashboardHref ? "Dashboard" : "Buat Akun"}
+                    </Link>
+                  </div>
+                </div>
+
+                <ol className="space-y-3 rounded-xl bg-white p-5 sm:p-6">
+                  {steps.map((step, index) => (
+                    <li key={step} className="flex items-start gap-3">
+                      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brilliant text-sm font-bold text-white">
+                        {index + 1}
                       </span>
-                      <h3 className="mt-4 font-bold text-slate-950">{facility.title}</h3>
-                      <p className="mt-2 text-xs leading-5 text-slate-500">{facility.description}</p>
-                    </article>
+                      <span className="pt-1 text-sm leading-6 text-navy/75 sm:text-base">
+                        {step}
+                      </span>
+                    </li>
                   ))}
-                </div>
+                </ol>
               </div>
             </div>
           </div>
         </section>
 
-        <section className="bg-white pb-20 sm:pb-24">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-iced-denim-dark via-iced-denim to-[#2f5f91] px-6 py-12 text-white shadow-2xl shadow-slate-900/15 sm:px-10 lg:px-14">
-              <div
-                aria-hidden="true"
-                className="absolute -right-16 -top-24 h-72 w-72 rounded-full border-[42px] border-white/10"
-              />
-              <div
-                aria-hidden="true"
-                className="absolute -bottom-24 left-1/3 h-64 w-64 rounded-full bg-pistachio/20 blur-3xl"
-              />
-
-              <div className="relative flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
-                <div className="max-w-2xl">
-                  <p className="text-xs font-bold uppercase tracking-[0.2em] text-pistachio">
-                    Book Appointment
-                  </p>
-                  <h2 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">
-                    Siap memulai kunjungan Anda?
-                  </h2>
-                  <p className="mt-4 text-sm leading-7 text-white/75 sm:text-base">
-                    Masuk ke akun MediCare untuk mendaftar kunjungan, memilih dokter, dan memantau
-                    status pendaftaran Anda dengan mudah.
-                  </p>
-                </div>
-
-                <div className="flex shrink-0 flex-col gap-3 sm:flex-row">
-                  <Link
-                    href={appointmentHref}
-                    className="inline-flex items-center justify-center gap-2 rounded-2xl bg-pistachio px-6 py-3.5 text-sm font-bold text-slate-950 shadow-lg shadow-slate-900/10 transition hover:-translate-y-0.5 hover:bg-[#aab34a]"
-                  >
-                    Book Appointment
-                    <Icon name="arrow-right" className="h-4 w-4" />
-                  </Link>
-                  <Link
-                    href={accountHref}
-                    className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/30 bg-white/10 px-6 py-3.5 text-sm font-semibold text-white transition hover:bg-white/20"
-                  >
-                    {accountLabel}
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section id="contact" className="scroll-mt-24 border-t border-slate-100 bg-white py-20 sm:py-24">
-          <div className="mx-auto grid max-w-7xl gap-12 px-4 sm:px-6 lg:grid-cols-[0.95fr_1.05fr] lg:gap-16 lg:px-8">
+        {/* Contact */}
+        <section id="contact" className="scroll-mt-24 border-t-4 border-ocean bg-white py-16 sm:py-20">
+          <div className="mx-auto grid max-w-6xl gap-10 px-4 sm:px-6 lg:grid-cols-2 lg:gap-14 lg:px-8">
             <div>
               <SectionHeading
                 eyebrow="Contact"
-                title="Kami siap membantu Anda"
-                description="Punya pertanyaan tentang layanan, jadwal dokter, atau pendaftaran? Hubungi tim MediCare melalui salah satu kanal berikut."
+                title="Hubungi MediCare"
+                description="Jika ada pertanyaan tentang layanan atau jadwal dokter, silakan hubungi kami melalui kontak di bawah ini."
               />
 
-              <div className="mt-8 space-y-3">
+              <div className="mt-7 space-y-3">
                 <a
                   href={`https://maps.google.com/?q=${encodeURIComponent(contact.address)}`}
                   target="_blank"
                   rel="noreferrer"
-                  className="flex items-start gap-4 rounded-2xl border border-slate-200 bg-white p-4 transition hover:border-iced-denim/30 hover:bg-frost/40"
+                  className="flex items-start gap-3 rounded-lg border-2 border-ocean p-4 transition-colors hover:border-mango"
                 >
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-frost text-iced-denim-dark">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-ocean text-brilliant">
                     <Icon name="map-pin" className="h-5 w-5" />
                   </span>
                   <span>
-                    <span className="block text-sm font-semibold text-slate-950">Alamat</span>
-                    <span className="mt-1 block text-sm leading-6 text-slate-500">{contact.address}</span>
+                    <span className="block text-sm font-bold text-navy">Alamat</span>
+                    <span className="mt-1 block text-sm leading-6 text-navy/70">
+                      {contact.address}
+                    </span>
                   </span>
                 </a>
 
                 <a
                   href={`tel:${contact.phone.replace(/[^+\d]/g, "")}`}
-                  className="flex items-start gap-4 rounded-2xl border border-slate-200 bg-white p-4 transition hover:border-iced-denim/30 hover:bg-frost/40"
+                  className="flex items-start gap-3 rounded-lg border-2 border-ocean p-4 transition-colors hover:border-mango"
                 >
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-frost text-iced-denim-dark">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-ocean text-brilliant">
                     <Icon name="phone" className="h-5 w-5" />
                   </span>
                   <span>
-                    <span className="block text-sm font-semibold text-slate-950">Telepon</span>
-                    <span className="mt-1 block text-sm text-slate-500">
+                    <span className="block text-sm font-bold text-navy">Telepon</span>
+                    <span className="mt-1 block text-sm text-navy/70">
                       {contact.phone} · WhatsApp {contact.whatsapp}
                     </span>
                   </span>
@@ -643,75 +524,63 @@ export default async function Home() {
 
                 <a
                   href={`mailto:${contact.email}`}
-                  className="flex items-start gap-4 rounded-2xl border border-slate-200 bg-white p-4 transition hover:border-iced-denim/30 hover:bg-frost/40"
+                  className="flex items-start gap-3 rounded-lg border-2 border-ocean p-4 transition-colors hover:border-mango"
                 >
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-frost text-iced-denim-dark">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-ocean text-brilliant">
                     <Icon name="mail" className="h-5 w-5" />
                   </span>
                   <span>
-                    <span className="block text-sm font-semibold text-slate-950">Email</span>
-                    <span className="mt-1 block text-sm text-slate-500">{contact.email}</span>
+                    <span className="block text-sm font-bold text-navy">Email</span>
+                    <span className="mt-1 block text-sm text-navy/70">{contact.email}</span>
                   </span>
                 </a>
               </div>
             </div>
 
-            <div className="rounded-[2rem] border border-slate-200 bg-frost p-2">
-              <div className="relative overflow-hidden rounded-[1.5rem] bg-[#dfeef9] p-6 sm:p-8">
-                <div
-                  aria-hidden="true"
-                  className="absolute inset-0 opacity-30"
-                  style={{
-                    backgroundImage:
-                      "linear-gradient(#5798d7 1px, transparent 1px), linear-gradient(90deg, #5798d7 1px, transparent 1px)",
-                    backgroundSize: "36px 36px",
-                  }}
-                />
+            <div className="rounded-2xl bg-brilliant p-6 text-white sm:p-8">
+              <div>
+                <h3 className="text-xl font-bold">MediCare Klinik &amp; Poliklinik</h3>
+                <p className="mt-2 text-sm leading-6 text-white/80">{contact.address}</p>
 
-                <div className="relative">
-                  <div className="flex items-start justify-between gap-4">
-                    <div>
-                      <p className="text-xs font-bold uppercase tracking-[0.2em] text-iced-denim-dark">
-                        Kunjungi kami
-                      </p>
-                      <h3 className="mt-2 text-2xl font-bold text-slate-950">MediCare Hospital &amp; Clinic</h3>
-                      <p className="mt-2 max-w-sm text-sm leading-6 text-slate-600">{contact.address}</p>
+                <a
+                  href={mapUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-4 inline-flex items-center gap-2 rounded-lg bg-mango px-4 py-2.5 text-sm font-bold text-navy transition-colors hover:bg-white"
+                >
+                  Buka di Google Maps
+                  <Icon name="arrow-right" className="h-4 w-4" />
+                </a>
+
+                <div className="mt-6 border-t border-white/20 pt-5">
+                  <p className="flex items-center gap-2 text-sm font-bold">
+                    <Icon name="clock" className="h-4 w-4 text-mango" />
+                    Jam operasional
+                  </p>
+                  <dl className="mt-3 space-y-2 text-sm">
+                    <div className="flex items-center justify-between gap-4">
+                      <dt className="text-white/70">Senin – Jumat</dt>
+                      <dd className="font-medium">08.00 – 20.00</dd>
                     </div>
-                    <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-iced-denim text-white shadow-lg shadow-slate-900/10">
-                      <Icon name="map-pin" className="h-6 w-6" />
-                    </span>
-                  </div>
+                    <div className="flex items-center justify-between gap-4">
+                      <dt className="text-white/70">Sabtu</dt>
+                      <dd className="font-medium">08.00 – 14.00</dd>
+                    </div>
+                    <div className="flex items-center justify-between gap-4">
+                      <dt className="text-white/70">Minggu</dt>
+                      <dd className="font-medium">IGD 24 jam</dd>
+                    </div>
+                  </dl>
+                </div>
 
-                  <a
-                    href={mapUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="mt-6 inline-flex items-center gap-2 rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-iced-denim-dark shadow-sm transition hover:bg-iced-denim hover:text-white"
-                  >
-                    Buka di Google Maps
-                    <Icon name="arrow-right" className="h-4 w-4" />
-                  </a>
-
-                  <div className="mt-8 rounded-2xl bg-white/90 p-5 shadow-sm backdrop-blur">
-                    <p className="flex items-center gap-2 text-sm font-bold text-slate-950">
-                      <Icon name="clock" className="h-4 w-4 text-iced-denim-dark" />
-                      Jam operasional
-                    </p>
-                    <dl className="mt-3 space-y-2 text-sm">
-                      <div className="flex items-center justify-between gap-4">
-                        <dt className="text-slate-500">Senin – Jumat</dt>
-                        <dd className="font-semibold text-slate-800">08.00 – 20.00</dd>
-                      </div>
-                      <div className="flex items-center justify-between gap-4">
-                        <dt className="text-slate-500">Sabtu</dt>
-                        <dd className="font-semibold text-slate-800">08.00 – 14.00</dd>
-                      </div>
-                      <div className="flex items-center justify-between gap-4">
-                        <dt className="text-slate-500">IGD</dt>
-                        <dd className="font-semibold text-iced-denim-dark">Buka 24 jam</dd>
-                      </div>
-                    </dl>
-                  </div>
+                <div className="mt-5 rounded-lg bg-white/10 p-3.5">
+                  <p className="flex items-center gap-2 text-sm font-bold text-mango">
+                    <Icon name="shield" className="h-4 w-4" />
+                    IGD buka 24 jam
+                  </p>
+                  <p className="mt-1 text-sm text-white/75">
+                    Untuk kondisi darurat, silakan langsung datang ke IGD MediCare.
+                  </p>
                 </div>
               </div>
             </div>
@@ -719,28 +588,32 @@ export default async function Home() {
         </section>
       </main>
 
-      <footer className="bg-[#0f2a3d] text-slate-300">
-        <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
-          <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
+      <footer className="border-t-4 border-mango bg-navy text-white">
+        <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
+          <div className="grid gap-9 sm:grid-cols-2 lg:grid-cols-4">
             <div>
-              <Link href="/" className="flex items-center gap-3" aria-label="MediCare - kembali ke beranda">
-                <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-iced-denim text-white">
-                  <Icon name="plus" className="h-6 w-6" strokeWidth={2.4} />
-                </span>
-                <span>
-                  <span className="block text-xl font-bold tracking-tight text-white">MediCare</span>
-                  <span className="block text-[10px] font-semibold uppercase tracking-[0.24em] text-pistachio">
-                    Hospital &amp; Clinic
-                  </span>
-                </span>
+              <Link
+                href="/"
+                className="inline-flex rounded-lg bg-white px-3 py-2"
+                aria-label="MediCare - kembali ke beranda"
+              >
+                <Image
+                  src="/logo-medicare.png"
+                  alt="MediCare"
+                  width={1774}
+                  height={887}
+                  sizes="160px"
+                  className="h-9 w-auto"
+                />
               </Link>
-              <p className="mt-5 max-w-xs text-sm leading-6 text-slate-400">
-                Layanan kesehatan yang hangat, cepat, dan terpercaya untuk Anda dan keluarga.
+              <p className="mt-4 max-w-xs text-sm leading-6 text-white/70">
+                Klinik dengan layanan dokter umum dan spesialis untuk Anda dan keluarga.
               </p>
+              <p className="mt-4 text-sm font-semibold text-mango">Your Health, Our Priority.</p>
             </div>
 
             <div>
-              <h3 className="text-sm font-bold text-white">Navigasi</h3>
+              <h3 className="text-sm font-bold uppercase tracking-[0.14em] text-mango">Navigasi</h3>
               <ul className="mt-4 space-y-2.5 text-sm">
                 {[
                   { href: "#home", label: "Home" },
@@ -750,7 +623,10 @@ export default async function Home() {
                   { href: "#contact", label: "Contact" },
                 ].map((item) => (
                   <li key={item.href}>
-                    <a href={item.href} className="transition hover:text-pistachio">
+                    <a
+                      href={item.href}
+                      className="text-white/70 transition-colors hover:text-mango"
+                    >
                       {item.label}
                     </a>
                   </li>
@@ -759,52 +635,61 @@ export default async function Home() {
             </div>
 
             <div>
-              <h3 className="text-sm font-bold text-white">Layanan</h3>
+              <h3 className="text-sm font-bold uppercase tracking-[0.14em] text-mango">Layanan</h3>
               <ul className="mt-4 space-y-2.5 text-sm">
                 {polis.length > 0 ? (
                   polis.slice(0, 5).map((poli) => (
                     <li key={poli.id_poli}>
-                      <a href="#services" className="transition hover:text-pistachio">
+                      <a
+                        href="#services"
+                        className="text-white/70 transition-colors hover:text-mango"
+                      >
                         {poli.nama_poli}
                       </a>
                     </li>
                   ))
                 ) : (
-                  <li className="text-slate-500">Belum ada layanan</li>
+                  <li className="text-white/50">Belum ada layanan</li>
                 )}
               </ul>
             </div>
 
             <div>
-              <h3 className="text-sm font-bold text-white">Kontak</h3>
-              <ul className="mt-4 space-y-3 text-sm">
-                <li className="flex items-start gap-2.5">
-                  <Icon name="map-pin" className="mt-0.5 h-4 w-4 shrink-0 text-pistachio" />
-                  <span className="text-slate-400">{contact.address}</span>
+              <h3 className="text-sm font-bold uppercase tracking-[0.14em] text-mango">Kontak</h3>
+              <ul className="mt-4 space-y-2.5 text-sm text-white/70">
+                <li className="flex items-start gap-2">
+                  <Icon name="map-pin" className="mt-0.5 h-4 w-4 shrink-0 text-mango" />
+                  <span>{contact.address}</span>
                 </li>
-                <li className="flex items-center gap-2.5">
-                  <Icon name="phone" className="h-4 w-4 shrink-0 text-pistachio" />
-                  <a href={`tel:${contact.phone.replace(/[^+\d]/g, "")}`} className="transition hover:text-white">
+                <li className="flex items-center gap-2">
+                  <Icon name="phone" className="h-4 w-4 shrink-0 text-mango" />
+                  <a
+                    href={`tel:${contact.phone.replace(/[^+\d]/g, "")}`}
+                    className="transition-colors hover:text-white"
+                  >
                     {contact.phone}
                   </a>
                 </li>
-                <li className="flex items-center gap-2.5">
-                  <Icon name="mail" className="h-4 w-4 shrink-0 text-pistachio" />
-                  <a href={`mailto:${contact.email}`} className="transition hover:text-white">
+                <li className="flex items-center gap-2">
+                  <Icon name="mail" className="h-4 w-4 shrink-0 text-mango" />
+                  <a
+                    href={`mailto:${contact.email}`}
+                    className="transition-colors hover:text-white"
+                  >
                     {contact.email}
                   </a>
                 </li>
-                <li className="flex items-center gap-2.5">
-                  <Icon name="clock" className="h-4 w-4 shrink-0 text-pistachio" />
-                  <span className="text-slate-400">Senin–Sabtu · IGD 24 jam</span>
+                <li className="flex items-center gap-2">
+                  <Icon name="clock" className="h-4 w-4 shrink-0 text-mango" />
+                  <span>IGD buka 24 jam</span>
                 </li>
               </ul>
             </div>
           </div>
 
-          <div className="mt-12 flex flex-col gap-3 border-t border-white/10 pt-6 text-xs text-slate-500 sm:flex-row sm:items-center sm:justify-between">
+          <div className="mt-10 flex flex-col gap-2 border-t border-white/15 pt-5 text-xs text-white/60 sm:flex-row sm:items-center sm:justify-between">
             <p>© {new Date().getFullYear()} MediCare. Seluruh hak cipta dilindungi.</p>
-            <p className="font-medium text-slate-400">Your Health, Our Priority.</p>
+            <p>MediCare · Your Health, Our Priority.</p>
           </div>
         </div>
       </footer>

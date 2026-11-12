@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Icon } from "./icons";
@@ -20,6 +21,7 @@ type SiteHeaderProps = {
 export function SiteHeader({ dashboardHref, appointmentHref }: SiteHeaderProps) {
   const [open, setOpen] = useState(false);
   const accountLabel = dashboardHref ? "Dashboard" : "Login";
+  const accountHref = dashboardHref ?? "/login";
 
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
@@ -31,44 +33,45 @@ export function SiteHeader({ dashboardHref, appointmentHref }: SiteHeaderProps) 
   }, []);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-slate-200/70 bg-white/90 backdrop-blur-xl">
-      <div className="mx-auto flex h-20 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
-        <Link href="/" aria-label="MediCare - kembali ke beranda" className="flex shrink-0 items-center gap-3">
-          <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-iced-denim text-white shadow-lg shadow-iced-denim/25">
-            <Icon name="plus" className="h-6 w-6" strokeWidth={2.4} />
-          </span>
-          <span>
-            <span className="block text-xl font-bold tracking-tight text-slate-950">MediCare</span>
-            <span className="block text-[10px] font-semibold uppercase tracking-[0.24em] text-iced-denim-dark">
-              Hospital &amp; Clinic
-            </span>
-          </span>
+    <header className="sticky top-0 z-50 border-b-4 border-ocean bg-white">
+      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:h-20 sm:px-6 lg:px-8">
+        <Link href="/" className="flex shrink-0 items-center" aria-label="MediCare - beranda">
+          <Image
+            src="/logo-medicare.png"
+            alt="MediCare"
+            width={1774}
+            height={887}
+            priority
+            sizes="160px"
+            className="h-9 w-auto sm:h-10"
+          />
         </Link>
 
-        <nav aria-label="Navigasi utama" className="hidden items-center gap-1 lg:flex">
+        <nav aria-label="Navigasi utama" className="hidden items-center gap-6 lg:flex">
           {navigation.map((item) => (
             <a
               key={item.href}
               href={item.href}
-              className="rounded-full px-4 py-2 text-sm font-medium text-slate-600 transition hover:bg-frost hover:text-iced-denim-dark"
+              className="text-base font-medium text-navy transition-colors hover:text-sunset"
             >
               {item.label}
             </a>
           ))}
         </nav>
 
-        <div className="hidden items-center gap-2 lg:flex">
+        <div className="hidden items-center gap-2.5 lg:flex">
           <Link
-            href={appointmentHref}
-            className="rounded-full border border-iced-denim/20 bg-frost px-4 py-2.5 text-sm font-semibold text-iced-denim-dark transition hover:border-iced-denim/40 hover:bg-white"
-          >
-            Book Appointment
-          </Link>
-          <Link
-            href={dashboardHref ?? "/login"}
-            className="rounded-full bg-iced-denim px-5 py-2.5 text-sm font-semibold text-white shadow-sm shadow-iced-denim/30 transition hover:bg-iced-denim-dark"
+            href={accountHref}
+            className="rounded-lg border-2 border-brilliant px-4 py-2.5 text-sm font-bold text-brilliant transition-colors hover:bg-ocean"
           >
             {accountLabel}
+          </Link>
+          <Link
+            href={appointmentHref}
+            className="inline-flex items-center gap-2 rounded-lg bg-brilliant px-4 py-2.5 text-sm font-bold text-white transition-colors hover:bg-navy"
+          >
+            <Icon name="calendar" className="h-4 w-4" />
+            Book Appointment
           </Link>
         </div>
 
@@ -78,41 +81,41 @@ export function SiteHeader({ dashboardHref, appointmentHref }: SiteHeaderProps) 
           aria-expanded={open}
           aria-controls="mobile-menu"
           aria-label={open ? "Tutup menu navigasi" : "Buka menu navigasi"}
-          className="flex h-11 w-11 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-700 transition hover:border-iced-denim/30 hover:text-iced-denim-dark lg:hidden"
+          className="flex h-11 w-11 items-center justify-center rounded-lg border-2 border-navy/15 text-navy transition-colors hover:border-brilliant hover:text-brilliant lg:hidden"
         >
           <Icon name={open ? "close" : "menu"} className="h-5 w-5" />
         </button>
       </div>
 
       {open && (
-        <div id="mobile-menu" className="border-t border-slate-100 bg-white px-4 pb-5 pt-3 lg:hidden">
-          <nav aria-label="Navigasi seluler" className="grid gap-1">
+        <div id="mobile-menu" className="border-t-2 border-ocean bg-white px-4 pb-5 pt-2 lg:hidden">
+          <nav aria-label="Navigasi seluler" className="grid">
             {navigation.map((item) => (
               <a
                 key={item.href}
                 href={item.href}
                 onClick={() => setOpen(false)}
-                className="rounded-xl px-4 py-3 text-sm font-medium text-slate-600 transition hover:bg-frost hover:text-iced-denim-dark"
+                className="rounded-lg px-3 py-3 text-base font-medium text-navy transition-colors hover:bg-ocean hover:text-brilliant"
               >
                 {item.label}
               </a>
             ))}
           </nav>
-          <div className="mt-3 grid gap-2 border-t border-slate-100 pt-3">
+          <div className="mt-3 grid gap-2 border-t-2 border-ocean pt-3">
+            <Link
+              href={accountHref}
+              onClick={() => setOpen(false)}
+              className="flex items-center justify-center rounded-lg border-2 border-brilliant px-4 py-3 text-base font-bold text-brilliant transition-colors hover:bg-ocean"
+            >
+              {accountLabel}
+            </Link>
             <Link
               href={appointmentHref}
               onClick={() => setOpen(false)}
-              className="flex items-center justify-center gap-2 rounded-xl bg-pistachio px-4 py-3 text-sm font-bold text-slate-950 transition hover:bg-[#aab34a]"
+              className="flex items-center justify-center gap-2 rounded-lg bg-brilliant px-4 py-3 text-base font-bold text-white transition-colors hover:bg-navy"
             >
-              Book Appointment <Icon name="arrow-right" className="h-4 w-4" />
-            </Link>
-            <Link
-              href={dashboardHref ?? "/login"}
-              onClick={() => setOpen(false)}
-              className="flex items-center justify-center gap-2 rounded-xl bg-iced-denim px-4 py-3 text-sm font-semibold text-white transition hover:bg-iced-denim-dark"
-            >
-              <Icon name={dashboardHref ? "users" : "shield"} className="h-4 w-4" />
-              {accountLabel}
+              <Icon name="calendar" className="h-5 w-5" />
+              Book Appointment
             </Link>
           </div>
         </div>

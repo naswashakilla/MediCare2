@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { logout } from "@/app/actions/auth";
@@ -13,20 +14,22 @@ export default async function PatientLayout({
   const initial = profile.nama_user.trim().charAt(0).toUpperCase() || "P";
 
   return (
-    <>
-      <header className="sticky top-0 z-10 border-b border-slate-200 bg-white/95 backdrop-blur">
+    <div className="min-h-screen bg-[#f6fafd]">
+      <header className="sticky top-0 z-20 border-b border-slate-200/70 bg-white/90 backdrop-blur-xl">
         <div className="mx-auto flex max-w-5xl items-center justify-between gap-3 px-4 py-3.5 sm:px-6">
-          <div className="flex items-center gap-3">
-            <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-teal-700 text-base font-bold text-white shadow-sm shadow-teal-900/20">
-              M
-            </span>
-            <span>
-              <Link href="/pasien" className="block text-lg font-bold tracking-tight text-slate-900">
-                MediCare
-              </Link>
-              <span className="block text-xs font-medium uppercase tracking-[0.16em] text-teal-700">
-                Portal pasien
-              </span>
+          <div>
+            <Link href="/pasien" aria-label="MediCare - portal pasien" className="inline-flex">
+              <Image
+                src="/logo-medicare.png"
+                alt="MediCare"
+                width={1774}
+                height={887}
+                sizes="160px"
+                className="h-8 w-auto"
+              />
+            </Link>
+            <span className="mt-0.5 block text-[10px] font-semibold uppercase tracking-[0.22em] text-iced-denim-dark">
+              Portal pasien
             </span>
           </div>
           <div className="flex items-center gap-3">
@@ -34,7 +37,10 @@ export default async function PatientLayout({
               <p className="text-sm font-semibold text-slate-800">{profile.nama_user}</p>
               <p className="text-xs text-slate-500">{profile.email}</p>
             </div>
-            <span aria-hidden="true" className="flex h-9 w-9 items-center justify-center rounded-full bg-teal-100 font-bold text-teal-800">
+            <span
+              aria-hidden="true"
+              className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-iced-denim to-iced-denim-dark font-bold text-white shadow-sm shadow-iced-denim/25"
+            >
               {initial}
             </span>
             <form action={logout}>
@@ -47,6 +53,6 @@ export default async function PatientLayout({
         <PatientNavigation />
       </header>
       {children}
-    </>
+    </div>
   );
 }

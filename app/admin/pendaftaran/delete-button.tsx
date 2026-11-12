@@ -13,7 +13,7 @@ export function DeletePendaftaranButton({ id }: { id: number }) {
   return (
     <form action={deletePendaftaran} onSubmit={confirmDelete}>
       <input type="hidden" name="id" value={id} />
-      <button className="rounded-lg border border-red-300 px-3 py-2 text-sm font-medium text-red-700 hover:bg-red-50">
+      <button className="rounded-xl border border-rose-200 bg-white px-3 py-2 text-sm font-semibold text-rose-600 transition hover:border-rose-300 hover:bg-rose-50">
         Hapus
       </button>
     </form>

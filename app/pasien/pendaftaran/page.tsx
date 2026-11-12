@@ -34,13 +34,13 @@ const statusLabels: Record<RegistrationStatus, string> = {
 
 const statusStyles: Record<RegistrationStatus, string> = {
   menunggu: "border-amber-200 bg-amber-50 text-amber-800",
-  dikonfirmasi: "border-sky-200 bg-sky-50 text-sky-800",
+  dikonfirmasi: "border-iced-denim/30 bg-frost text-iced-denim-dark",
   selesai: "border-emerald-200 bg-emerald-50 text-emerald-800",
   dibatalkan: "border-rose-200 bg-rose-50 text-rose-800",
 };
 
-const inputClass = "w-full rounded-lg border border-slate-300 bg-white px-3 py-2";
-const labelClass = "grid gap-1 text-sm font-medium text-slate-700";
+const inputClass = "w-full rounded-xl border border-iced-denim/15 bg-frost/60 px-3.5 py-2.5 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-iced-denim focus:bg-white focus:ring-4 focus:ring-iced-denim/20";
+const labelClass = "grid gap-1.5 text-sm font-medium text-slate-700";
 
 export default async function PendaftaranPasienPage({
   searchParams,
@@ -148,7 +148,7 @@ export default async function PendaftaranPasienPage({
             className={inputClass}
           />
         </label>
-        <button className="rounded-lg bg-teal-700 px-4 py-2 font-semibold text-white hover:bg-teal-800 sm:col-span-2">
+        <button className="rounded-xl bg-iced-denim px-4 py-2.5 font-semibold text-white shadow-sm shadow-iced-denim/25 transition hover:bg-iced-denim-dark sm:col-span-2">
           {registration ? "Simpan perubahan" : "Daftar kunjungan"}
         </button>
       </form>
@@ -158,23 +158,23 @@ export default async function PendaftaranPasienPage({
   return (
     <main className="mx-auto w-full max-w-3xl space-y-6 px-4 py-6 sm:px-6">
       <div>
-        <h1 className="text-2xl font-bold text-slate-900">Pendaftaran Saya</h1>
-        <p className="mt-1 text-slate-600">Daftarkan kunjungan Anda dan pantau statusnya.</p>
+        <h1 className="text-2xl font-bold tracking-tight text-slate-950">Pendaftaran Saya</h1>
+        <p className="mt-1 text-sm text-slate-500">Daftarkan kunjungan Anda dan pantau statusnya.</p>
       </div>
 
       {typeof params.notice === "string" && (
-        <p role="status" className="break-words rounded-lg bg-blue-50 p-3 text-sm text-blue-900">
+        <p role="status" className="break-words rounded-xl border border-iced-denim/20 bg-frost p-3 text-sm text-iced-denim-dark">
           {params.notice}
         </p>
       )}
       {doctorResult.error && (
-        <p role="alert" className="rounded-lg bg-red-50 p-3 text-sm text-red-800">
+        <p role="alert" className="rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700">
           Gagal memuat daftar dokter: {doctorResult.error.message}
         </p>
       )}
 
       {!patient && !patientResult.error && (
-        <p className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+        <p className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
           Anda belum memiliki data pasien.{" "}
           <Link href="/pasien/profil" className="font-semibold underline">
             Lengkapi profil Anda
@@ -184,7 +184,7 @@ export default async function PendaftaranPasienPage({
       )}
 
       {patient && !doctorResult.error && doctors.length > 0 && (
-        <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
+        <section className="rounded-2xl border border-slate-200/70 bg-white p-5 shadow-sm shadow-slate-900/[0.02] sm:p-6">
           <h2 className="mb-4 font-semibold text-slate-900">Daftar kunjungan baru</h2>
           {registrationForm()}
           <p className="mt-3 text-xs text-slate-500">
@@ -204,23 +204,23 @@ export default async function PendaftaranPasienPage({
               placeholder="Cari nama dokter..."
               className={`${inputClass} min-w-0 flex-1`}
             />
-            <button className="rounded-lg border border-slate-300 bg-white px-4 py-2 font-medium hover:bg-slate-50">
+            <button className="rounded-xl border border-iced-denim/20 bg-frost px-4 py-2.5 font-semibold text-iced-denim-dark transition hover:border-iced-denim/40 hover:bg-white">
               Cari
             </button>
           </form>
 
           {listError ? (
-            <p role="alert" className="rounded-lg bg-red-50 p-3 text-sm text-red-800">
+            <p role="alert" className="rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700">
               Gagal memuat data pendaftaran: {listError}
             </p>
           ) : registrations.length === 0 ? (
-            <p className="rounded-lg border border-dashed border-slate-300 p-6 text-center text-slate-600">
+            <p className="rounded-2xl border border-dashed border-iced-denim/25 bg-white p-6 text-center text-sm text-slate-600">
               {query ? "Pendaftaran tidak ditemukan." : "Belum ada pendaftaran kunjungan."}
             </p>
           ) : (
             <div className="space-y-3">
               {registrations.map((registration) => (
-                <article key={registration.id_daftar} className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+                <article key={registration.id_daftar} className="rounded-2xl border border-slate-200/70 bg-white p-5 shadow-sm shadow-slate-900/[0.02]">
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div className="min-w-0">
                       <div className="flex flex-wrap items-center gap-2">
@@ -248,7 +248,7 @@ export default async function PendaftaranPasienPage({
                   </div>
                   {registration.status === "menunggu" && (
                     <details className="mt-3 border-t border-slate-100 pt-3">
-                      <summary className="cursor-pointer text-sm font-medium text-teal-700">Ubah pendaftaran</summary>
+                      <summary className="cursor-pointer text-sm font-medium text-iced-denim-dark">Ubah pendaftaran</summary>
                       <div className="mt-3">{registrationForm(registration)}</div>
                     </details>
                   )}
@@ -264,12 +264,12 @@ export default async function PendaftaranPasienPage({
               </span>
               <div className="flex gap-2">
                 {page > 1 && (
-                  <Link href={pageHref(page - 1)} className="rounded-lg border bg-white px-3 py-2">
+                  <Link href={pageHref(page - 1)} className="rounded-xl border border-slate-200 bg-white px-3 py-2 font-medium text-slate-600 transition hover:border-iced-denim/30 hover:bg-frost hover:text-iced-denim-dark">
                     Sebelumnya
                   </Link>
                 )}
                 {page < totalPages && (
-                  <Link href={pageHref(page + 1)} className="rounded-lg border bg-white px-3 py-2">
+                  <Link href={pageHref(page + 1)} className="rounded-xl border border-slate-200 bg-white px-3 py-2 font-medium text-slate-600 transition hover:border-iced-denim/30 hover:bg-frost hover:text-iced-denim-dark">
                     Berikutnya
                   </Link>
                 )}

@@ -1,56 +1,97 @@
 "use client";
 
-import { useActionState } from "react";
+import Image from "next/image";
 import Link from "next/link";
+import { useActionState } from "react";
+import { Icon } from "@/app/_components/landing/icons";
 import { register } from "./actions";
 
 export default function RegisterPage() {
   const [state, formAction, pending] = useActionState(register, undefined);
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-[#f2f7f6] p-4 sm:p-8">
-      <div className="grid w-full max-w-5xl overflow-hidden rounded-[2rem] border border-white bg-white shadow-xl shadow-slate-900/[0.08] md:min-h-[680px] md:grid-cols-2">
-        <section className="relative hidden flex-col justify-between overflow-hidden bg-gradient-to-br from-teal-900 via-teal-800 to-cyan-800 p-10 text-white md:flex lg:p-12">
+    <main className="flex min-h-screen items-center justify-center bg-white p-4 sm:p-8">
+      <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden" aria-hidden="true">
+        <div className="absolute -left-24 top-16 h-72 w-72 rounded-full bg-pistachio/20 blur-3xl" />
+        <div className="absolute -right-28 bottom-10 h-96 w-96 rounded-full bg-iced-denim/15 blur-3xl" />
+      </div>
+
+      <div className="grid w-full max-w-5xl overflow-hidden rounded-[2rem] border border-slate-200/70 bg-white shadow-2xl shadow-slate-900/[0.08] md:min-h-[700px] md:grid-cols-2">
+        <section className="relative hidden flex-col justify-between overflow-hidden bg-gradient-to-br from-iced-denim-dark via-iced-denim to-[#2f5f91] p-10 text-white md:flex lg:p-12">
           <div aria-hidden="true" className="absolute -right-20 top-24 h-72 w-72 rounded-full border-[42px] border-white/[0.08]" />
-          <div aria-hidden="true" className="absolute -bottom-16 -left-16 h-56 w-56 rounded-full bg-cyan-300/10 blur-2xl" />
-          <div className="relative flex items-center gap-3">
-            <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-xl font-bold text-teal-800">M</span>
-            <span>
-              <span className="block text-xl font-bold">MediCare</span>
-              <span className="text-xs uppercase tracking-[0.2em] text-teal-100">Poliklinik</span>
-            </span>
+          <div aria-hidden="true" className="absolute -bottom-16 -left-16 h-56 w-56 rounded-full bg-pistachio/15 blur-2xl" />
+          <div aria-hidden="true" className="absolute right-10 top-1/2 h-40 w-40 rounded-full bg-white/[0.04]" />
+
+          <div className="relative inline-flex w-fit rounded-xl bg-white px-4 py-2.5">
+            <Image
+              src="/logo-medicare.png"
+              alt="MediCare"
+              width={1774}
+              height={887}
+              sizes="160px"
+              className="h-8 w-auto"
+            />
           </div>
+
           <div className="relative py-12">
-            <span className="mb-6 inline-flex rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-xs font-medium text-teal-50">
+            <span className="mb-6 inline-flex items-center gap-2 rounded-full border border-pistachio/40 bg-pistachio/15 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.18em] text-white">
+              <span aria-hidden="true" className="h-2 w-2 rounded-full bg-pistachio" />
               Mulai perjalanan sehat Anda
             </span>
-            <h1 className="max-w-md text-4xl font-bold leading-tight tracking-tight lg:text-5xl">
+            <h1 className="max-w-md text-4xl font-bold leading-[1.1] tracking-tight lg:text-5xl">
               Satu akun untuk layanan yang lebih mudah.
             </h1>
-            <p className="mt-5 max-w-sm leading-7 text-teal-50/90">
+            <p className="mt-5 max-w-sm text-sm leading-7 text-white/80 sm:text-base">
               Buat akun pasien untuk mengakses layanan poliklinik MediCare dengan lebih praktis.
             </p>
+
+            <ul className="mt-9 space-y-3">
+              {["Pendaftaran kunjungan online", "Pantau status pendaftaran", "Kelola profil pasien"].map(
+                (item) => (
+                  <li key={item} className="flex items-center gap-3 text-sm text-white/85">
+                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-pistachio text-slate-950">
+                      <Icon name="check" className="h-3.5 w-3.5" strokeWidth={2.6} />
+                    </span>
+                    {item}
+                  </li>
+                ),
+              )}
+            </ul>
           </div>
-          <p className="relative text-xs text-teal-100/70">Data akun Anda dikelola dengan aman.</p>
+
+          <p className="relative text-xs text-white/60">Data akun Anda dikelola dengan aman.</p>
         </section>
 
-        <section className="flex items-center justify-center p-6 sm:p-10 lg:p-14">
-          <form action={formAction} className="w-full max-w-sm space-y-5">
+        <section className="flex items-center justify-center bg-white p-6 sm:p-10 lg:p-12">
+          <form action={formAction} className="w-full max-w-sm space-y-4">
             <Link
               href="/"
-              className="inline-flex w-fit items-center gap-2 text-sm font-medium text-slate-500 transition hover:text-teal-700"
+              className="inline-flex w-fit items-center gap-2 text-sm font-medium text-slate-500 transition hover:text-iced-denim-dark"
             >
-              <span aria-hidden="true">←</span> Kembali ke beranda
+              <Icon name="arrow-right" className="h-4 w-4 rotate-180" />
+              Kembali ke beranda
             </Link>
-            <div className="mb-7 md:hidden">
-              <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-teal-700 text-xl font-bold text-white">M</span>
-              <p className="mt-3 text-lg font-bold text-slate-900">MediCare</p>
-              <p className="text-xs uppercase tracking-[0.2em] text-teal-700">Poliklinik</p>
+
+            <div className="mb-6 md:hidden">
+              <Image
+                src="/logo-medicare.png"
+                alt="MediCare"
+                width={1774}
+                height={887}
+                sizes="160px"
+                className="h-9 w-auto"
+              />
+              <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.24em] text-iced-denim-dark">
+                Hospital &amp; Clinic
+              </p>
             </div>
+
             <div>
-              <p className="text-sm font-semibold text-teal-700">Akun pasien</p>
-              <h2 className="mt-2 text-3xl font-bold tracking-tight text-slate-900">Buat akun</h2>
-              <p className="mt-2 text-sm leading-6 text-slate-500">Isi data berikut untuk memulai menggunakan layanan MediCare.</p>
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-iced-denim-dark">Akun pasien</p>
+              <h2 className="mt-2 text-3xl font-bold tracking-tight text-slate-950">Buat akun</h2>
+              <p className="mt-2 text-sm leading-6 text-slate-500">
+                Isi data berikut untuk memulai menggunakan layanan MediCare.
+              </p>
             </div>
 
             {state?.error && (
@@ -68,7 +109,7 @@ export default function RegisterPage() {
                 minLength={3}
                 maxLength={50}
                 required
-                className="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition focus:border-teal-600 focus:bg-white focus:ring-4 focus:ring-teal-600/10"
+                className="mt-2 w-full rounded-xl border border-iced-denim/15 bg-frost/60 px-4 py-3 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-iced-denim focus:bg-white focus:ring-4 focus:ring-iced-denim/20"
                 placeholder="Nama sesuai identitas"
               />
             </label>
@@ -81,7 +122,7 @@ export default function RegisterPage() {
                 autoComplete="email"
                 maxLength={100}
                 required
-                className="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition focus:border-teal-600 focus:bg-white focus:ring-4 focus:ring-teal-600/10"
+                className="mt-2 w-full rounded-xl border border-iced-denim/15 bg-frost/60 px-4 py-3 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-iced-denim focus:bg-white focus:ring-4 focus:ring-iced-denim/20"
                 placeholder="nama@email.com"
               />
             </label>
@@ -94,7 +135,7 @@ export default function RegisterPage() {
                 autoComplete="new-password"
                 minLength={6}
                 required
-                className="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition focus:border-teal-600 focus:bg-white focus:ring-4 focus:ring-teal-600/10"
+                className="mt-2 w-full rounded-xl border border-iced-denim/15 bg-frost/60 px-4 py-3 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-iced-denim focus:bg-white focus:ring-4 focus:ring-iced-denim/20"
                 placeholder="Minimal 6 karakter"
               />
             </label>
@@ -107,7 +148,7 @@ export default function RegisterPage() {
                 autoComplete="new-password"
                 minLength={6}
                 required
-                className="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition focus:border-teal-600 focus:bg-white focus:ring-4 focus:ring-teal-600/10"
+                className="mt-2 w-full rounded-xl border border-iced-denim/15 bg-frost/60 px-4 py-3 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-iced-denim focus:bg-white focus:ring-4 focus:ring-iced-denim/20"
                 placeholder="Ulangi password"
               />
             </label>
@@ -115,14 +156,16 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={pending}
-              className="w-full rounded-xl bg-teal-700 px-4 py-3 font-semibold text-white shadow-sm shadow-teal-900/15 transition hover:bg-teal-800 focus:outline-none focus:ring-4 focus:ring-teal-700/20 disabled:cursor-not-allowed disabled:opacity-60"
+              className="w-full rounded-xl bg-iced-denim px-4 py-3 font-semibold text-white shadow-lg shadow-iced-denim/25 transition hover:bg-iced-denim-dark focus:outline-none focus:ring-4 focus:ring-iced-denim/25 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {pending ? "Memproses..." : "Daftar sebagai pasien"}
             </button>
 
             <p className="pt-1 text-center text-sm text-slate-500">
               Sudah punya akun?{" "}
-              <Link href="/login" className="font-semibold text-teal-700 hover:text-teal-900 hover:underline">Masuk</Link>
+              <Link href="/login" className="font-semibold text-iced-denim-dark hover:text-[#284f78] hover:underline">
+                Masuk
+              </Link>
             </p>
           </form>
         </section>

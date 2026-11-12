@@ -1,19 +1,28 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f4f8f8;
-  --foreground: #172b3a;
+  --background: #ffffff;
+  --foreground: #19244e;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --color-pistachio: #b9c255;
-  --color-frost: #e6f1fa;
-  --color-iced-denim: #5798d7;
-  --color-iced-denim-dark: #3e7fbe;
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+
+  /* Palette baru MediCare */
+  --color-sunset: #f36b2e;
+  --color-mango: #f59a1e;
+  --color-ocean: #c4e7e5;
+  --color-brilliant: #253c96;
+  --color-navy: #19244e;
+
+  /* Alias lama: dipakai halaman login & dashboard agar tetap berjalan */
+  --color-pistachio: #f59a1e;
+  --color-frost: #c4e7e5;
+  --color-iced-denim: #253c96;
+  --color-iced-denim-dark: #19244e;
+
+  --font-sans: var(--font-poppins);
 }
 
 html {
@@ -23,7 +32,7 @@ html {
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  font-family: var(--font-poppins), Arial, Helvetica, sans-serif;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -33,8 +42,8 @@ body {
 }
 
 ::selection {
-  background: #99f6e4;
-  color: #134e4a;
+  background: #f59a1e;
+  color: #19244e;
 }
 
 input,

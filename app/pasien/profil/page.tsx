@@ -14,8 +14,8 @@ type Patient = {
   no_hp: string | null;
 };
 
-const inputClass = "w-full rounded-lg border border-slate-300 bg-white px-3 py-2";
-const labelClass = "grid gap-1 text-sm font-medium text-slate-700";
+const inputClass = "w-full rounded-xl border border-iced-denim/15 bg-frost/60 px-3.5 py-2.5 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-iced-denim focus:bg-white focus:ring-4 focus:ring-iced-denim/20";
+const labelClass = "grid gap-1.5 text-sm font-medium text-slate-700";
 
 export default async function ProfilPasienPage({
   searchParams,
@@ -35,31 +35,31 @@ export default async function ProfilPasienPage({
   return (
     <main className="mx-auto w-full max-w-3xl space-y-6 px-4 py-6 sm:px-6">
       <div>
-        <h1 className="text-2xl font-bold text-slate-900">Profil Saya</h1>
-        <p className="mt-1 text-slate-600">
+        <h1 className="text-2xl font-bold tracking-tight text-slate-950">Profil Saya</h1>
+        <p className="mt-1 text-sm text-slate-500">
           Data ini digunakan oleh petugas klinik saat Anda mendaftar kunjungan.
         </p>
       </div>
 
       {typeof params.notice === "string" && (
-        <p role="status" className="break-words rounded-lg bg-blue-50 p-3 text-sm text-blue-900">
+        <p role="status" className="break-words rounded-xl border border-iced-denim/20 bg-frost p-3 text-sm text-iced-denim-dark">
           {params.notice}
         </p>
       )}
       {error && (
-        <p role="alert" className="rounded-lg bg-red-50 p-3 text-sm text-red-800">
+        <p role="alert" className="rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700">
           Gagal memuat profil: {error.message}
         </p>
       )}
 
       {!patient && !error && (
-        <p className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+        <p className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
           Akun Anda belum memiliki data pasien. Lengkapi formulir di bawah agar dapat mendaftar kunjungan.
         </p>
       )}
 
-      <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
-        <div className="mb-4 grid gap-1 rounded-lg bg-slate-50 p-3 text-sm text-slate-600">
+      <section className="rounded-2xl border border-slate-200/70 bg-white p-5 shadow-sm shadow-slate-900/[0.02] sm:p-6">
+        <div className="mb-4 grid gap-1 rounded-xl border border-iced-denim/15 bg-frost/60 p-3 text-sm text-slate-600">
           <span>
             Nama akun: <span className="font-medium text-slate-800">{account.nama_user}</span>
           </span>
@@ -115,14 +115,14 @@ export default async function ProfilPasienPage({
             Alamat
             <textarea name="alamat" maxLength={100} rows={3} defaultValue={patient?.alamat ?? ""} className={inputClass} />
           </label>
-          <button className="rounded-lg bg-teal-700 px-4 py-2 font-semibold text-white hover:bg-teal-800 sm:col-span-2">
+          <button className="rounded-xl bg-iced-denim px-4 py-2.5 font-semibold text-white shadow-sm shadow-iced-denim/25 transition hover:bg-iced-denim-dark sm:col-span-2">
             {patient ? "Simpan perubahan" : "Simpan profil"}
           </button>
         </form>
       </section>
 
       <p className="text-sm text-slate-500">
-        Butuh mengubah data lain? <Link href="/pasien/pendaftaran" className="font-medium text-teal-700 hover:underline">Lihat pendaftaran saya</Link>
+        Butuh mengubah data lain? <Link href="/pasien/pendaftaran" className="font-medium text-iced-denim-dark hover:underline">Lihat pendaftaran saya</Link>
       </p>
     </main>
   );

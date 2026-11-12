@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Icon, type IconName } from "@/app/_components/landing/icons";
 import { requireRole } from "@/utils/auth";
 import { createClient } from "@/utils/supabase/server";
 import { formatDate, todayISO } from "@/utils/format";
@@ -21,7 +22,7 @@ const statusLabels: Record<RegistrationStatus, string> = {
 
 const statusStyles: Record<RegistrationStatus, string> = {
   menunggu: "border-amber-200 bg-amber-50 text-amber-800",
-  dikonfirmasi: "border-sky-200 bg-sky-50 text-sky-800",
+  dikonfirmasi: "border-iced-denim/30 bg-frost text-iced-denim-dark",
   selesai: "border-emerald-200 bg-emerald-50 text-emerald-800",
   dibatalkan: "border-rose-200 bg-rose-50 text-rose-800",
 };
@@ -65,10 +66,25 @@ export default async function PasienPage() {
   ]);
   const latestRegistrations = (latestResult.data ?? []) as unknown as RegistrationSummary[];
 
-  const stats = [
-    { title: "Total pendaftaran", value: totalResult.count ?? 0, tint: "bg-sky-50 text-sky-700" },
-    { title: "Menunggu konfirmasi", value: waitingResult.count ?? 0, tint: "bg-amber-50 text-amber-700" },
-    { title: "Kunjungan mendatang", value: upcomingResult.count ?? 0, tint: "bg-emerald-50 text-emerald-700" },
+  const stats: { title: string; value: number; icon: IconName; tint: string }[] = [
+    {
+      title: "Total pendaftaran",
+      value: totalResult.count ?? 0,
+      icon: "calendar",
+      tint: "bg-frost text-iced-denim-dark",
+    },
+    {
+      title: "Menunggu konfirmasi",
+      value: waitingResult.count ?? 0,
+      icon: "clock",
+      tint: "bg-pistachio/25 text-slate-800",
+    },
+    {
+      title: "Kunjungan mendatang",
+      value: upcomingResult.count ?? 0,
+      icon: "check",
+      tint: "bg-iced-denim/10 text-iced-denim-dark",
+    },
   ];
   const errors = [
     patientResult.error,
@@ -81,27 +97,33 @@ export default async function PasienPage() {
 
   return (
     <main className="mx-auto w-full max-w-5xl space-y-8 px-4 py-6 sm:px-6 lg:py-8">
-      <section className="relative isolate overflow-hidden rounded-[1.75rem] bg-gradient-to-br from-teal-800 via-teal-700 to-cyan-800 px-6 py-8 text-white shadow-lg shadow-teal-900/10 sm:px-9 sm:py-10">
+      <section className="relative isolate overflow-hidden rounded-[1.75rem] bg-gradient-to-br from-iced-denim-dark via-iced-denim to-[#2f5f91] px-6 py-8 text-white shadow-xl shadow-iced-denim/20 sm:px-9 sm:py-10">
         <div aria-hidden="true" className="absolute -right-12 -top-20 -z-10 h-64 w-64 rounded-full border-[34px] border-white/10" />
-        <div aria-hidden="true" className="absolute -bottom-28 right-40 -z-10 h-56 w-56 rounded-full bg-cyan-300/10 blur-2xl" />
-        <p className="text-sm font-medium text-teal-100">Portal pasien MediCare</p>
-        <h1 className="mt-3 max-w-2xl text-3xl font-bold tracking-tight sm:text-4xl">
+        <div aria-hidden="true" className="absolute -bottom-28 right-40 -z-10 h-56 w-56 rounded-full bg-pistachio/20 blur-2xl" />
+
+        <span className="inline-flex items-center gap-2 rounded-full border border-pistachio/40 bg-pistachio/15 px-3.5 py-1.5 text-[10px] font-bold uppercase tracking-[0.18em] text-white">
+          <span aria-hidden="true" className="h-2 w-2 rounded-full bg-pistachio" />
+          Portal pasien MediCare
+        </span>
+        <h1 className="mt-4 max-w-2xl text-3xl font-bold tracking-tight sm:text-4xl">
           Halo, {account.nama_user}
         </h1>
-        <p className="mt-3 max-w-xl text-sm leading-6 text-teal-50 sm:text-base">
+        <p className="mt-3 max-w-xl text-sm leading-6 text-white/80 sm:text-base">
           Daftarkan kunjungan Anda ke dokter yang tersedia dan pantau statusnya di satu tempat.
         </p>
         <div className="mt-6 flex flex-wrap gap-3">
           <Link
             href="/pasien/pendaftaran"
-            className="inline-flex items-center gap-2 rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-teal-800 shadow-sm transition hover:bg-teal-50"
+            className="inline-flex items-center gap-2 rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-iced-denim-dark shadow-sm transition hover:bg-frost"
           >
-            Daftar kunjungan <span aria-hidden="true">→</span>
+            <Icon name="calendar" className="h-4 w-4" />
+            Daftar kunjungan
           </Link>
           <Link
             href="/pasien/profil"
             className="inline-flex items-center gap-2 rounded-xl border border-white/30 bg-white/10 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-white/20"
           >
+            <Icon name="users" className="h-4 w-4" />
             Lihat profil saya
           </Link>
         </div>
@@ -136,14 +158,17 @@ export default async function PasienPage() {
         <>
           <section aria-label="Ringkasan pendaftaran" className="grid gap-4 sm:grid-cols-3">
             {stats.map((stat) => (
-              <article key={stat.title} className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm shadow-slate-900/[0.02]">
+              <article
+                key={stat.title}
+                className="rounded-2xl border border-slate-200/70 bg-white p-5 shadow-sm shadow-slate-900/[0.02] transition hover:-translate-y-0.5 hover:shadow-md"
+              >
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium text-slate-500">{stat.title}</span>
-                  <span className={`flex h-9 w-9 items-center justify-center rounded-xl text-xs font-bold ${stat.tint}`}>
-                    {stat.title.charAt(0)}
+                  <span className={`flex h-9 w-9 items-center justify-center rounded-xl ${stat.tint}`}>
+                    <Icon name={stat.icon} className="h-4 w-4" />
                   </span>
                 </div>
-                <p className="mt-4 text-3xl font-bold tracking-tight text-slate-900">{stat.value}</p>
+                <p className="mt-4 text-3xl font-bold tracking-tight text-slate-950">{stat.value}</p>
               </article>
             ))}
           </section>
@@ -151,26 +176,32 @@ export default async function PasienPage() {
           <section>
             <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-teal-700">Riwayat terbaru</p>
-                <h2 className="mt-1 text-xl font-bold text-slate-900">Pendaftaran terakhir Anda</h2>
+                <p className="text-xs font-bold uppercase tracking-[0.18em] text-iced-denim-dark">Riwayat terbaru</p>
+                <h2 className="mt-1 text-xl font-bold tracking-tight text-slate-950">Pendaftaran terakhir Anda</h2>
               </div>
-              <Link href="/pasien/pendaftaran" className="text-sm font-medium text-teal-700 hover:underline">
+              <Link
+                href="/pasien/pendaftaran"
+                className="inline-flex items-center gap-1 text-sm font-semibold text-iced-denim-dark transition hover:gap-2"
+              >
                 Lihat semua →
               </Link>
             </div>
             {latestRegistrations.length === 0 ? (
-              <p className="rounded-2xl border border-dashed border-slate-300 bg-white p-6 text-center text-sm text-slate-600">
+              <p className="rounded-2xl border border-dashed border-iced-denim/25 bg-white p-6 text-center text-sm text-slate-600">
                 Belum ada pendaftaran.{" "}
-                <Link href="/pasien/pendaftaran" className="font-medium text-teal-700 hover:underline">
+                <Link href="/pasien/pendaftaran" className="font-medium text-iced-denim-dark hover:underline">
                   Daftar kunjungan pertama Anda
                 </Link>
               </p>
             ) : (
               <div className="grid gap-3 lg:grid-cols-3">
                 {latestRegistrations.map((registration) => (
-                  <article key={registration.id_daftar} className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm shadow-slate-900/[0.02]">
+                  <article
+                    key={registration.id_daftar}
+                    className="rounded-2xl border border-slate-200/70 bg-white p-5 shadow-sm shadow-slate-900/[0.02] transition hover:-translate-y-0.5 hover:border-iced-denim/25 hover:shadow-md"
+                  >
                     <div className="flex items-start justify-between gap-2">
-                      <h3 className="font-semibold text-slate-900">
+                      <h3 className="font-semibold text-slate-950">
                         {registration.dokter?.nama_dokter ?? "Dokter tidak diketahui"}
                       </h3>
                       <span className={`shrink-0 rounded-full border px-2.5 py-0.5 text-xs font-semibold ${statusStyles[registration.status]}`}>
@@ -178,7 +209,10 @@ export default async function PasienPage() {
                       </span>
                     </div>
                     <p className="mt-2 text-sm text-slate-500">{registration.dokter?.poli?.nama_poli ?? "Poli"}</p>
-                    <p className="mt-1 text-sm font-medium text-slate-700">Kunjungan: {formatDate(registration.tgl_kunjungan)}</p>
+                    <p className="mt-3 flex items-center gap-2 text-sm font-medium text-slate-700">
+                      <Icon name="calendar" className="h-4 w-4 text-iced-denim" />
+                      {formatDate(registration.tgl_kunjungan)}
+                    </p>
                   </article>
                 ))}
               </div>
@@ -189,15 +223,19 @@ export default async function PasienPage() {
 
       <section>
         <div className="mb-4">
-          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-teal-700">Layanan kami</p>
-          <h2 className="mt-1 text-xl font-bold text-slate-900">Poli yang tersedia</h2>
+          <p className="text-xs font-bold uppercase tracking-[0.18em] text-iced-denim-dark">Layanan kami</p>
+          <h2 className="mt-1 text-xl font-bold tracking-tight text-slate-950">Poli yang tersedia</h2>
         </div>
         <div className="flex flex-wrap gap-2">
           {polis.length === 0 ? (
             <p className="text-sm text-slate-500">Daftar poli belum tersedia.</p>
           ) : (
             polis.map((poli) => (
-              <span key={poli.id_poli} className="rounded-full border border-teal-100 bg-teal-50 px-3 py-1.5 text-sm font-medium text-teal-800">
+              <span
+                key={poli.id_poli}
+                className="inline-flex items-center gap-2 rounded-full border border-iced-denim/20 bg-frost px-3 py-1.5 text-sm font-medium text-iced-denim-dark"
+              >
+                <Icon name="building" className="h-3.5 w-3.5" />
                 {poli.nama_poli}
               </span>
             ))
