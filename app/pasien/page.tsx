@@ -20,13 +20,6 @@ const statusLabels: Record<RegistrationStatus, string> = {
   dibatalkan: "Dibatalkan",
 };
 
-const statusStyles: Record<RegistrationStatus, string> = {
-  menunggu: "border-amber-200 bg-amber-50 text-amber-800",
-  dikonfirmasi: "border-iced-denim/30 bg-frost text-iced-denim-dark",
-  selesai: "border-emerald-200 bg-emerald-50 text-emerald-800",
-  dibatalkan: "border-rose-200 bg-rose-50 text-rose-800",
-};
-
 export default async function PasienPage() {
   const account = await requireRole("pasien");
   const supabase = await createClient();
@@ -81,31 +74,15 @@ export default async function PasienPage() {
   ].filter(Boolean);
 
   return (
-    <main className="mx-auto w-full max-w-5xl space-y-8 px-4 py-6 sm:px-6 lg:py-8">
-      <section className="rounded-xl border border-slate-200 bg-white p-5 sm:p-6">
-        <p className="text-sm font-medium text-brilliant">Portal pasien</p>
+    <main className="mx-auto w-full max-w-7xl space-y-8 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+      <section>
+        <p className="text-sm font-medium text-brilliant">Dashboard pasien</p>
         <h1 className="mt-1 text-2xl font-bold text-navy sm:text-3xl">
-          Halo, {account.nama_user}
+          Selamat datang, {account.nama_user}
         </h1>
-        <p className="mt-2 text-sm leading-6 text-slate-600 sm:text-base">
+        <p className="mt-2 text-sm text-slate-600">
           Daftarkan kunjungan Anda ke dokter yang tersedia dan pantau statusnya di satu tempat.
         </p>
-        <div className="mt-6 flex flex-wrap gap-3">
-          <Link
-            href="/pasien/pendaftaran"
-            className="inline-flex items-center gap-2 rounded-lg bg-brilliant px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-navy"
-          >
-            <Icon name="calendar" className="h-4 w-4" />
-            Daftar kunjungan
-          </Link>
-          <Link
-            href="/pasien/profil"
-            className="inline-flex items-center gap-2 rounded-lg border border-slate-200 px-4 py-2.5 text-sm font-semibold text-navy transition-colors hover:bg-slate-50"
-          >
-            <Icon name="users" className="h-4 w-4" />
-            Lihat profil
-          </Link>
-        </div>
       </section>
 
       {errors.length > 0 && (
@@ -134,81 +111,68 @@ export default async function PasienPage() {
       )}
 
       {patient && (
-        <>
-          <section aria-label="Ringkasan pendaftaran" className="grid gap-4 sm:grid-cols-3">
-            {stats.map((stat) => (
-              <article key={stat.title} className="rounded-xl border border-slate-200 bg-white p-5">
-                <div className="flex items-center justify-between text-slate-600">
-                  <span className="text-sm font-medium">{stat.title}</span>
-                  <Icon name={stat.icon} className="h-5 w-5 text-brilliant" />
-                </div>
-                <p className="mt-4 text-3xl font-bold text-navy">{stat.value}</p>
-              </article>
-            ))}
-          </section>
+        <section aria-label="Ringkasan pendaftaran" className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+          {stats.map((stat) => (
+            <article key={stat.title} className="rounded-xl border border-slate-200 bg-white p-5">
+              <div className="flex items-center justify-between text-slate-600">
+                <span className="text-sm font-medium">{stat.title}</span>
+                <Icon name={stat.icon} className="h-5 w-5 text-brilliant" />
+              </div>
+              <p className="mt-4 text-3xl font-bold text-navy">{stat.value}</p>
+            </article>
+          ))}
+        </section>
+      )}
 
-          <section>
-            <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
-              <h2 className="text-lg font-bold text-navy">Pendaftaran terakhir</h2>
-              <Link
-                href="/pasien/pendaftaran"
-                className="text-sm font-semibold text-brilliant hover:underline"
-              >
-                Lihat semua
-              </Link>
-            </div>
-            {latestRegistrations.length === 0 ? (
-              <p className="rounded-lg border border-dashed border-slate-300 bg-white p-5 text-center text-sm text-slate-600">
-                Belum ada pendaftaran.{" "}
-                <Link href="/pasien/pendaftaran" className="font-medium text-brilliant hover:underline">
-                  Daftar kunjungan pertama Anda
-                </Link>
-              </p>
-            ) : (
-              <div className="grid gap-3 lg:grid-cols-3">
-                {latestRegistrations.map((registration) => (
-                  <article
-                    key={registration.id_daftar}
-                    className="rounded-xl border border-slate-200 bg-white p-5"
-                  >
-                    <div className="flex items-start justify-between gap-2">
-                      <h3 className="font-semibold text-navy">
-                        {registration.dokter?.nama_dokter ?? "Dokter tidak diketahui"}
-                      </h3>
-                      <span className={`shrink-0 rounded-full border px-2 py-0.5 text-xs font-medium ${statusStyles[registration.status]}`}>
-                        {statusLabels[registration.status]}
-                      </span>
-                    </div>
-                    <p className="mt-2 text-sm text-slate-500">{registration.dokter?.poli?.nama_poli ?? "Poli"}</p>
-                    <p className="mt-3 flex items-center gap-2 text-sm text-slate-700">
-                      <Icon name="calendar" className="h-4 w-4 text-brilliant" />
+      {patient && (
+        <section>
+          <div className="flex flex-wrap items-end justify-between gap-3">
+            <h2 className="text-lg font-bold text-navy">Pendaftaran terakhir</h2>
+            <Link href="/pasien/pendaftaran" className="text-sm text-navy hover:underline">
+              Lihat semua
+            </Link>
+          </div>
+          {latestRegistrations.length === 0 ? (
+            <p className="mt-3 text-sm text-slate-600">Belum ada pendaftaran.</p>
+          ) : (
+            <ul className="mt-3 divide-y divide-slate-200 border-y border-slate-200 bg-white px-4">
+              {latestRegistrations.map((registration) => (
+                <li
+                  key={registration.id_daftar}
+                  className="flex flex-col gap-1 py-3 sm:flex-row sm:items-center sm:justify-between"
+                >
+                  <div>
+                    <p className="font-medium text-navy">
+                      {registration.dokter?.nama_dokter ?? "Dokter tidak diketahui"}
+                    </p>
+                    <p className="text-sm text-slate-600">
+                      {registration.dokter?.poli?.nama_poli ?? "Poli"} ·{" "}
                       {formatDate(registration.tgl_kunjungan)}
                     </p>
-                  </article>
-                ))}
-              </div>
-            )}
-          </section>
-        </>
+                  </div>
+                  <span className="text-sm text-slate-600">
+                    {statusLabels[registration.status]}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
       )}
 
       <section>
         <h2 className="text-lg font-bold text-navy">Poli yang tersedia</h2>
-        <div className="flex flex-wrap gap-2">
+        <ul className="mt-3 space-y-2">
           {polis.length === 0 ? (
-            <p className="text-sm text-slate-500">Daftar poli belum tersedia.</p>
+            <li className="text-sm text-slate-500">Daftar poli belum tersedia.</li>
           ) : (
             polis.map((poli) => (
-              <span
-                key={poli.id_poli}
-                className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-navy"
-              >
-                <Icon name="building" className="h-4 w-4 text-brilliant" />
+              <li key={poli.id_poli} className="text-sm text-navy">
                 {poli.nama_poli}
-              </span>
+              </li>
             ))
           )}
-        </div>
+        </ul>
       </section>
     </main>
   );
