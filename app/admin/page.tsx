@@ -3,41 +3,31 @@ import { Icon, type IconName } from "@/app/_components/landing/icons";
 import { requireRole } from "@/utils/auth";
 import { createClient } from "@/utils/supabase/server";
 
-const modules: { href: string; title: string; description: string; icon: IconName }[] = [
+const modules: { href: string; title: string }[] = [
   {
     href: "/admin/pasien",
     title: "Data pasien",
-    description: "Kelola profil pasien",
-    icon: "users",
   },
   {
     href: "/admin/dokter",
     title: "Data dokter",
-    description: "Kelola dokter dan jadwal",
-    icon: "stethoscope",
   },
   {
     href: "/admin/poli",
     title: "Data poli",
-    description: "Atur layanan poliklinik",
-    icon: "building",
   },
   {
     href: "/admin/pendaftaran",
     title: "Pendaftaran",
-    description: "Kelola kunjungan pasien",
-    icon: "calendar",
   },
   {
     href: "/admin/laporan",
     title: "Laporan",
-    description: "Lihat dan cetak laporan",
-    icon: "scan",
   },
 ];
 
 export default async function AdminPage() {
-  const profile = await requireRole("admin");
+  await requireRole("admin");
   const supabase = await createClient();
 
   const [patients, doctors, clinics, registrations] = await Promise.all([
@@ -59,13 +49,7 @@ export default async function AdminPage() {
   return (
     <main className="mx-auto w-full max-w-7xl space-y-8 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
       <section>
-        <p className="text-sm font-medium text-brilliant">Dashboard admin</p>
-        <h1 className="mt-1 text-2xl font-bold text-navy sm:text-3xl">
-          Selamat datang, {profile.nama_user}
-        </h1>
-        <p className="mt-2 text-sm text-slate-600">
-          Ringkasan data dan akses pengelolaan klinik.
-        </p>
+        <h1 className="text-2xl font-bold text-navy">Dashboard admin</h1>
       </section>
 
       {hasError && (
@@ -87,24 +71,16 @@ export default async function AdminPage() {
       </section>
 
       <section>
-        <h2 className="text-lg font-bold text-navy">Menu pengelolaan</h2>
-        <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <h2 className="text-lg font-bold text-navy">Menu utama</h2>
+        <ul className="mt-3 space-y-2">
           {modules.map((module) => (
-            <Link
-              href={module.href}
-              key={module.href}
-              className="flex items-center gap-4 rounded-xl border border-slate-200 bg-white p-4 transition-colors hover:border-brilliant/40 hover:bg-ocean/30"
-            >
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-ocean text-brilliant">
-                <Icon name={module.icon} className="h-5 w-5" />
-              </span>
-              <span>
-                <span className="block font-semibold text-navy">{module.title}</span>
-                <span className="mt-0.5 block text-sm text-slate-600">{module.description}</span>
-              </span>
-            </Link>
+            <li key={module.href}>
+              <Link href={module.href} className="text-navy hover:underline">
+                {module.title}
+              </Link>
+            </li>
           ))}
-        </div>
+        </ul>
       </section>
     </main>
   );
