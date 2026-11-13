@@ -31,7 +31,7 @@ const contact = {
   address: "Jl. Ilmu No.45, Surakarta, Jawa Tengah",
   phone: "(021) 555-0123",
   whatsapp: "0812-3456-7890",
-  email: "halo@medicare.co.id",
+  email: "poliklinik@medicare.co.id",
 };
 
 const doctorAccents = [
