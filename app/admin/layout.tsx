@@ -2,7 +2,6 @@ import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { logout } from "@/app/actions/auth";
-import { Icon } from "@/app/_components/landing/icons";
 import { requireRole } from "@/utils/auth";
 import { AdminNavigation } from "./navigation";
 
@@ -34,19 +33,6 @@ export default async function AdminLayout({
           Menu utama
         </div>
         <AdminNavigation />
-
-        <div className="hidden p-4 md:block">
-          <div className="relative overflow-hidden rounded-2xl border border-iced-denim/15 bg-frost/70 p-4">
-            <div aria-hidden="true" className="absolute -right-6 -top-6 h-16 w-16 rounded-full bg-pistachio/30 blur-xl" />
-            <span className="relative flex h-9 w-9 items-center justify-center rounded-xl bg-white text-iced-denim-dark shadow-sm">
-              <Icon name="shield" className="h-4 w-4" />
-            </span>
-            <p className="relative mt-3 text-sm font-semibold text-slate-900">Butuh bantuan?</p>
-            <p className="relative mt-1 text-xs leading-5 text-slate-500">
-              Hubungi pengelola sistem jika ada kendala mengatur data klinik.
-            </p>
-          </div>
-        </div>
       </aside>
 
       <div className="min-w-0 flex-1">
