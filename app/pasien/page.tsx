@@ -162,17 +162,26 @@ export default async function PasienPage() {
 
       <section>
         <h2 className="text-lg font-bold text-navy">Poli yang tersedia</h2>
-        <ul className="mt-3 space-y-2">
-          {polis.length === 0 ? (
-            <li className="text-sm text-slate-500">Daftar poli belum tersedia.</li>
-          ) : (
-            polis.map((poli) => (
-              <li key={poli.id_poli} className="text-sm text-navy">
-                {poli.nama_poli}
+        {polis.length === 0 ? (
+          <p className="mt-3 text-sm text-slate-500">Daftar poli belum tersedia.</p>
+        ) : (
+          <ul className="mt-3 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+            {polis.map((poli) => (
+              <li
+                key={poli.id_poli}
+                className="flex items-center justify-between gap-3 rounded-lg border border-slate-200 bg-white px-4 py-3"
+              >
+                <span className="text-sm font-medium text-navy">{poli.nama_poli}</span>
+                <Link
+                  href="/pasien/pendaftaran"
+                  className="shrink-0 rounded-lg border border-slate-200 px-3 py-1.5 text-sm font-medium text-navy transition-colors hover:bg-slate-50"
+                >
+                  Daftar
+                </Link>
               </li>
-            ))
-          )}
-        </ul>
+            ))}
+          </ul>
+        )}
       </section>
     </main>
   );
