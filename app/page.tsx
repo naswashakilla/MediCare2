@@ -28,15 +28,11 @@ type Doctor = {
 };
 
 const contact = {
-  address: "Jl. Kesehatan No. 88, Jakarta Selatan, DKI Jakarta 12345",
+  address: "Jl. Ilmu No.45, Surakarta, Jawa Tengah",
   phone: "(021) 555-0123",
   whatsapp: "0812-3456-7890",
   email: "halo@medicare.co.id",
 };
-
-const mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-  "Jl. Kesehatan No. 88 Jakarta Selatan",
-)}`;
 
 const doctorAccents = [
   "border-t-sunset",
@@ -507,16 +503,6 @@ export default async function Home() {
               <div>
                 <h3 className="text-xl font-bold">MediCare Klinik &amp; Poliklinik</h3>
                 <p className="mt-2 text-sm leading-6 text-white/80">{contact.address}</p>
-
-                <a
-                  href={mapUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="mt-4 inline-flex items-center gap-2 rounded-lg bg-mango px-4 py-2.5 text-sm font-bold text-navy transition-colors hover:bg-white"
-                >
-                  Buka di Google Maps
-                  <Icon name="arrow-right" className="h-4 w-4" />
-                </a>
 
                 <div className="mt-6 border-t border-white/20 pt-5">
                   <p className="flex items-center gap-2 text-sm font-bold">
