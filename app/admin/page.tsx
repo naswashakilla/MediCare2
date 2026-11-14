@@ -72,10 +72,10 @@ export default async function AdminPage() {
 
       <section aria-label="Aksi cepat">
         <Link
-          href="/admin/pasien#tambah-pasien"
+          href="/admin/pendaftaran#tambah-pendaftaran"
           className="inline-flex rounded-lg bg-brilliant px-4 py-2.5 font-semibold text-white transition hover:bg-navy"
         >
-          Tambah pasien
+          Tambah pendaftaran
         </Link>
       </section>
 

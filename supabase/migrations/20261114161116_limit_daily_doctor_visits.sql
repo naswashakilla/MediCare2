@@ -29,8 +29,8 @@ begin
      and status <> 'dibatalkan'
      and id_daftar is distinct from new.id_daftar;
 
-  if active_count >= 20 then
-    raise exception 'Kuota dokter untuk tanggal tersebut sudah penuh (maksimal 20 pasien).'
+  if active_count >= 15 then
+    raise exception 'Kuota dokter untuk tanggal tersebut sudah penuh (maksimal 15 pasien).'
       using errcode = 'P0001';
   end if;
 

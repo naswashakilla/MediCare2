@@ -2,9 +2,9 @@ import Link from "next/link";
 import { requireRole } from "@/utils/auth";
 import { createClient } from "@/utils/supabase/server";
 import { formatDate, formatDateTime, todayISO } from "@/utils/format";
+import { MAX_VISITS_PER_DOCTOR_PER_DAY } from "@/utils/pendaftaran";
 import { savePendaftaran } from "./actions";
 import { CancelPendaftaranButton } from "./cancel-button";
-import { MAX_VISITS_PER_DOCTOR_PER_DAY } from "./constants";
 
 type RegistrationStatus = "menunggu" | "dikonfirmasi" | "selesai" | "dibatalkan";
 

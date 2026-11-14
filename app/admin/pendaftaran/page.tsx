@@ -226,9 +226,15 @@ export default async function PendaftaranAdminPage({
       )}
 
       {patients.length > 0 && doctors.length > 0 && (
-        <section className="rounded-2xl border border-slate-200/70 bg-white p-5 shadow-sm shadow-slate-900/[0.02] sm:p-6">
+        <section
+          id="tambah-pendaftaran"
+          className="scroll-mt-24 rounded-2xl border border-slate-200/70 bg-white p-5 shadow-sm shadow-slate-900/[0.02] sm:p-6"
+        >
           <h2 className="mb-4 font-semibold text-slate-900">Tambah pendaftaran</h2>
           {registrationForm()}
+          <p className="mt-3 text-xs text-slate-500">
+            Setiap dokter menerima maksimal 15 pasien per tanggal. Pendaftaran akan ditolak jika kuota sudah penuh.
+          </p>
         </section>
       )}
 

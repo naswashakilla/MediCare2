@@ -6,7 +6,7 @@ import { z } from "zod";
 import { requireRole } from "@/utils/auth";
 import { createClient } from "@/utils/supabase/server";
 import { todayISO } from "@/utils/format";
-import { MAX_VISITS_PER_DOCTOR_PER_DAY } from "./constants";
+import { MAX_VISITS_PER_DOCTOR_PER_DAY } from "@/utils/pendaftaran";
 
 const registrationSchema = z.object({
   id_dokter: z.coerce.number().int().positive("Pilih dokter yang valid"),

@@ -1,1 +1,0 @@
-export const MAX_VISITS_PER_DOCTOR_PER_DAY = 20;

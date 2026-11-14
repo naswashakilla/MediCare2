@@ -182,10 +182,7 @@ export default async function PasienAdminPage({
         </p>
       )}
 
-      <section
-        id="tambah-pasien"
-        className="scroll-mt-24 rounded-2xl border border-slate-200/70 bg-white p-5 shadow-sm shadow-slate-900/[0.02] sm:p-6"
-      >
+      <section className="rounded-2xl border border-slate-200/70 bg-white p-5 shadow-sm shadow-slate-900/[0.02] sm:p-6">
         <h2 className="mb-4 font-semibold text-slate-900">Tambah pasien</h2>
         {patientForm()}
       </section>
