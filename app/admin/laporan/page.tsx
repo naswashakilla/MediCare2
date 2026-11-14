@@ -18,6 +18,11 @@ type RegistrationRow = {
   dokter: { nama_dokter: string; poli: { nama_poli: string } | null } | null;
 };
 
+type DoctorOption = {
+  id_dokter: number;
+  nama_dokter: string;
+};
+
 const statuses: readonly RegistrationStatus[] = ["menunggu", "dikonfirmasi", "selesai", "dibatalkan"];
 
 const statusLabels: Record<RegistrationStatus, string> = {
@@ -42,7 +47,7 @@ const labelClass = "grid gap-1.5 text-sm font-medium text-slate-700";
 export default async function LaporanAdminPage({
   searchParams,
 }: {
-  searchParams: Promise<{ from?: string | string[]; to?: string | string[]; status?: string | string[] }>;
+  searchParams: Promise<{ from?: string | string[]; to?: string | string[]; status?: string | string[]; dokter?: string | string[] }>;
 }) {
   const profile = await requireRole("admin");
   const params = await searchParams;
@@ -53,23 +58,37 @@ export default async function LaporanAdminPage({
   const to = dateSchema.safeParse(rawTo).success ? rawTo : "";
   const rawStatus = typeof params.status === "string" ? params.status : "";
   const status = statuses.includes(rawStatus as RegistrationStatus) ? (rawStatus as RegistrationStatus) : "";
+  const rawDoctor = typeof params.dokter === "string" ? params.dokter : "";
+  const parsedDoctorId = rawDoctor
+    ? z.string().regex(/^[1-9]\d*$/).transform(Number).refine(Number.isSafeInteger).safeParse(rawDoctor)
+    : null;
+  const doctorId = parsedDoctorId?.success ? parsedDoctorId.data : null;
+  const invalidDoctorFilter = Boolean(rawDoctor && doctorId === null);
   const invalidRange = Boolean(from && to && from > to);
 
+  const supabase = await createClient();
+  let reportQuery = supabase
+    .from("pendaftaran")
+    .select(
+      "id_daftar,tgl_daftar,tgl_kunjungan,keluhan,status,pasien(nama_pasien),dokter(nama_dokter,poli(nama_poli))",
+      { count: "exact" }
+    );
+  if (from) reportQuery = reportQuery.gte("tgl_kunjungan", from);
+  if (to) reportQuery = reportQuery.lte("tgl_kunjungan", to);
+  if (status) reportQuery = reportQuery.eq("status", status);
+  if (doctorId !== null) reportQuery = reportQuery.eq("id_dokter", doctorId);
+
+  const [doctorResult, result] = await Promise.all([
+    supabase.from("dokter").select("id_dokter,nama_dokter").order("nama_dokter"),
+    invalidRange || invalidDoctorFilter
+      ? Promise.resolve(null)
+      : reportQuery.order("tgl_kunjungan").order("id_daftar").limit(500),
+  ]);
+  const doctors = (doctorResult.data ?? []) as DoctorOption[];
   let rows: RegistrationRow[] = [];
   let total = 0;
   let error: string | null = null;
-  if (!invalidRange) {
-    const supabase = await createClient();
-    let query = supabase
-      .from("pendaftaran")
-      .select(
-        "id_daftar,tgl_daftar,tgl_kunjungan,keluhan,status,pasien(nama_pasien),dokter(nama_dokter,poli(nama_poli))",
-        { count: "exact" }
-      );
-    if (from) query = query.gte("tgl_kunjungan", from);
-    if (to) query = query.lte("tgl_kunjungan", to);
-    if (status) query = query.eq("status", status);
-    const result = await query.order("tgl_kunjungan").order("id_daftar").limit(500);
+  if (result) {
     rows = (result.data ?? []) as unknown as RegistrationRow[];
     total = result.count ?? 0;
     error = result.error?.message ?? null;
@@ -91,6 +110,14 @@ export default async function LaporanAdminPage({
         ? `Periode kunjungan: sampai ${formatDateLong(to)}`
         : "Periode kunjungan: semua tanggal";
   const statusLabel = status ? `Status: ${statusLabels[status]}` : "Status: semua";
+  const doctorLabel = invalidDoctorFilter
+    ? "Dokter: tidak valid"
+    : doctorId !== null
+      ? `Dokter: ${doctors.find((doctor) => doctor.id_dokter === doctorId)?.nama_dokter ?? `ID ${doctorId}`}`
+      : "Dokter: semua";
+  const exportFileName = doctorId !== null
+    ? `laporan-pendaftaran-dokter-${doctorId}-${todayISO()}`
+    : `laporan-pendaftaran-${todayISO()}`;
 
   return (
     <main className="mx-auto w-full max-w-5xl space-y-6 px-4 py-6 sm:px-6 print:max-w-none print:p-0">
@@ -100,19 +127,29 @@ export default async function LaporanAdminPage({
         </Link>
         <h1 className="mt-2 text-2xl font-bold tracking-tight text-slate-950">Laporan Pendaftaran</h1>
         <p className="mt-1 text-sm text-slate-500">
-          Cetak atau ekspor laporan pendaftaran pasien sesuai periode dan status.
+          Cetak atau ekspor laporan pendaftaran pasien sesuai periode, status, dan dokter.
         </p>
       </div>
 
+      {invalidDoctorFilter && (
+        <p role="alert" className="rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700 print:hidden">
+          Pilihan dokter tidak valid.
+        </p>
+      )}
       {invalidRange && (
         <p role="alert" className="rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700 print:hidden">
           Tanggal mulai harus lebih kecil atau sama dengan tanggal akhir.
         </p>
       )}
+      {doctorResult.error && (
+        <p role="alert" className="rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700 print:hidden">
+          Gagal memuat daftar dokter: {doctorResult.error.message}
+        </p>
+      )}
 
       <section className="rounded-2xl border border-slate-200/70 bg-white p-5 shadow-sm shadow-slate-900/[0.02] sm:p-6 print:hidden">
         <h2 className="mb-4 font-semibold text-slate-900">Filter laporan</h2>
-        <form action="/admin/laporan" className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <form action="/admin/laporan" className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
           <label className={labelClass}>
             Tanggal mulai
             <input type="date" name="from" defaultValue={from} className={inputClass} />
@@ -132,6 +169,17 @@ export default async function LaporanAdminPage({
               ))}
             </select>
           </label>
+          <label className={labelClass}>
+            Dokter (opsional)
+            <select name="dokter" defaultValue={doctorId?.toString() ?? ""} className={inputClass}>
+              <option value="">Semua dokter</option>
+              {doctors.map((doctor) => (
+                <option key={doctor.id_dokter} value={doctor.id_dokter}>
+                  {doctor.nama_dokter}
+                </option>
+              ))}
+            </select>
+          </label>
           <div className="flex items-end">
             <button className="w-full rounded-xl bg-iced-denim px-4 py-2.5 font-semibold text-white shadow-sm shadow-iced-denim/25 transition hover:bg-iced-denim-dark">
               Terapkan filter
@@ -142,7 +190,7 @@ export default async function LaporanAdminPage({
 
       <div className="flex flex-wrap gap-2 print:hidden">
         <PrintButton />
-        <ExportWordButton fileName={`laporan-pendaftaran-${todayISO()}`} />
+        <ExportWordButton fileName={exportFileName} />
       </div>
 
       {error && (
@@ -157,6 +205,7 @@ export default async function LaporanAdminPage({
           <h3 className="text-base font-semibold text-slate-800">Laporan Data Pendaftaran Pasien</h3>
           <p className="muted text-xs text-slate-500">{periodeLabel}</p>
           <p className="muted text-xs text-slate-500">{statusLabel}</p>
+          <p className="muted text-xs text-slate-500">{doctorLabel}</p>
         </header>
 
         <div className="mt-4 grid gap-2 text-sm text-slate-700 sm:grid-cols-2 lg:grid-cols-4">
