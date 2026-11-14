@@ -243,10 +243,6 @@ export default async function Home() {
                   className="aspect-[3/2] w-full object-cover"
                 />
               </div>
-              <div className="absolute -bottom-6 right-3 hidden rounded-xl bg-brilliant px-5 py-4 text-white shadow-sm sm:block">
-                <p className="text-2xl font-extrabold">24/7</p>
-                <p className="text-xs text-white/80">IGD siap membantu</p>
-              </div>
             </div>
 
             <div>
