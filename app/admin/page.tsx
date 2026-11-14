@@ -70,6 +70,15 @@ export default async function AdminPage() {
         ))}
       </section>
 
+      <section aria-label="Aksi cepat">
+        <Link
+          href="/admin/pasien#tambah-pasien"
+          className="inline-flex rounded-lg bg-brilliant px-4 py-2.5 font-semibold text-white transition hover:bg-navy"
+        >
+          Tambah pasien
+        </Link>
+      </section>
+
       <section>
         <h2 className="text-lg font-bold text-navy">Menu utama</h2>
         <ul className="mt-3 space-y-2">
