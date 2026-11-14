@@ -4,6 +4,7 @@ import { createClient } from "@/utils/supabase/server";
 import { formatDate, formatDateTime, todayISO } from "@/utils/format";
 import { savePendaftaran } from "./actions";
 import { CancelPendaftaranButton } from "./cancel-button";
+import { MAX_VISITS_PER_DOCTOR_PER_DAY } from "./constants";
 
 type RegistrationStatus = "menunggu" | "dikonfirmasi" | "selesai" | "dibatalkan";
 
@@ -190,6 +191,10 @@ export default async function PendaftaranPasienPage({
           <p className="mt-3 text-xs text-slate-500">
             Pendaftaran baru berstatus <span className="font-medium text-amber-700">menunggu</span> sampai dikonfirmasi
             petugas klinik.
+          </p>
+          <p className="mt-1 text-xs text-slate-500">
+            Setiap dokter menerima maksimal {MAX_VISITS_PER_DOCTOR_PER_DAY} pasien per tanggal. Kuota yang penuh tidak dapat
+            didaftarkan.
           </p>
         </section>
       )}
