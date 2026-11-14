@@ -31,8 +31,8 @@ utils/            # Supabase client, helper auth & format tanggal
 
 1. **Buat project Supabase** di [supabase.com](https://supabase.com), lalu jalankan migration dan seed:
    ```bash
-   supabase link --project-ref <PROJECT_REF>
-   supabase db push            # menjalankan folder supabase/migrations
+   npx supabase link --project-ref <PROJECT_REF>
+   npx supabase db push        # menjalankan folder supabase/migrations
    # lalu jalankan isi supabase/seed.sql di SQL Editor (opsional, data contoh)
    ```
 2. **Salin environment variable** ke `.env.local`:
@@ -41,6 +41,9 @@ utils/            # Supabase client, helper auth & format tanggal
    NEXT_PUBLIC_SUPABASE_ANON_KEY=<ANON_KEY>
    ```
    Keduanya ada di *Project Settings → API* pada dashboard Supabase.
+   Jika memakai Supabase lokal (`npx supabase start`), `supabase/config.toml` sudah mengatur
+   `auth.email.enable_confirmations = false`. Pengaturan ini tidak memengaruhi project Supabase
+   yang di-host di cloud.
 3. **Jalankan aplikasi**:
    ```bash
    npm install
@@ -63,6 +66,10 @@ utils/            # Supabase client, helper auth & format tanggal
    - Buka dashboard Supabase → **Authentication → URL Configuration**.
    - Set **Site URL** ke domain Vercel Anda, mis. `https://medicare2.vercel.app`.
    - Tambahkan ke **Redirect URLs**: `https://<domain-vercel>/**` dan `http://localhost:3000/**` (untuk development).
-6. (Opsional) Jika tidak ingin registrasi harus konfirmasi email: **Authentication → Providers → Email → matikan "Confirm email"**.
+6. Jika tidak ingin registrasi harus konfirmasi email: buka **Authentication → Providers → Email**
+   lalu matikan **Confirm email**. Tanpa konfirmasi email, siapa pun dapat mendaftar menggunakan
+   alamat email yang belum terbukti mereka miliki; gunakan ini untuk development/demo, bukan
+   sebagai pengganti pengamanan akses data. Role pendaftar tetap `pasien`, dan migration
+   `20261114000000_protect_profile_role.sql` mencegah pengguna biasa mengubah role sendiri.
 
 Setelah deploy, setiap push ke branch utama akan otomatis ter-deploy ulang.
