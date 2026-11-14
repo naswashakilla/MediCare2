@@ -6,6 +6,7 @@ import { z } from "zod";
 import { requireRole } from "@/utils/auth";
 import { createClient } from "@/utils/supabase/server";
 import { todayISO } from "@/utils/format";
+import { MAX_VISITS_PER_DOCTOR_PER_DAY } from "./constants";
 
 const registrationSchema = z.object({
   id_dokter: z.coerce.number().int().positive("Pilih dokter yang valid"),
@@ -62,7 +63,9 @@ export async function savePendaftaran(formData: FormData) {
     if (fetchError) showNotice(`Gagal memeriksa pendaftaran: ${fetchError.message}`);
     if (!existing || existing.id_pasien !== patient.id_pasien) showNotice("Pendaftaran tidak ditemukan.");
     if (existing.status !== "menunggu") showNotice("Hanya pendaftaran berstatus menunggu yang dapat diubah.");
+  }
 
+  if (id) {
     const { data, error } = await supabase
       .from("pendaftaran")
       .update({
@@ -73,6 +76,9 @@ export async function savePendaftaran(formData: FormData) {
       .eq("id_daftar", Number(id))
       .select("id_daftar")
       .maybeSingle();
+    if (error?.code === "P0001" && error.message.toLowerCase().includes("kuota dokter")) {
+      showNotice(`Kuota dokter untuk tanggal tersebut sudah penuh (maksimal ${MAX_VISITS_PER_DOCTOR_PER_DAY} pasien).`);
+    }
     if (error) showNotice(`Gagal menyimpan perubahan: ${error.message}`);
     if (!data) showNotice("Pendaftaran tidak ditemukan.");
   } else {
@@ -83,6 +89,9 @@ export async function savePendaftaran(formData: FormData) {
       keluhan: parsed.data.keluhan,
       status: "menunggu",
     });
+    if (error?.code === "P0001" && error.message.toLowerCase().includes("kuota dokter")) {
+      showNotice(`Kuota dokter untuk tanggal tersebut sudah penuh (maksimal ${MAX_VISITS_PER_DOCTOR_PER_DAY} pasien).`);
+    }
     if (error) showNotice(`Gagal menyimpan pendaftaran: ${error.message}`);
   }
 
