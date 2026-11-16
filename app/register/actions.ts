@@ -41,10 +41,9 @@ export async function register(
 
   if (error) return { error: error.message };
 
- 
   if (!data.session) {
-    return { error: "Pendaftaran berhasil. Silakan cek email untuk konfirmasi, lalu login." };
+    return { success: "Akun berhasil dibuat. Silakan cek email untuk konfirmasi, lalu login." };
   }
 
-  redirect("/pasien");
+  redirect(`/pasien?success=${encodeURIComponent("Akun berhasil dibuat.")}`);
 }

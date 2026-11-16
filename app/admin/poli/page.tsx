@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SuccessNotice } from "@/app/_components/success-notice";
 import { requireRole } from "@/utils/auth";
 import { createClient } from "@/utils/supabase/server";
 import { savePoli } from "./actions";
@@ -73,6 +74,7 @@ export default async function PoliPage({
       {params.notice && (
         <p role="status" className="break-words rounded-xl border border-iced-denim/20 bg-frost p-3 text-sm text-iced-denim-dark">{params.notice}</p>
       )}
+      {typeof params.success === "string" && <SuccessNotice message={params.success} />}
       {doctorCountErrors.length > 0 && (
         <p role="alert" className="rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700">
           Gagal memeriksa dokter pada beberapa poli. Penghapusan dinonaktifkan sampai koneksi pulih.{" "}

@@ -20,6 +20,10 @@ function showNotice(message: string): never {
   redirect(`/admin/poli?notice=${encodeURIComponent(message)}`);
 }
 
+function showSuccess(message: string): never {
+  redirect(`/admin/poli?success=${encodeURIComponent(message)}`);
+}
+
 export async function savePoli(formData: FormData) {
   await requireRole("admin");
   const id = field(formData, "id");
@@ -40,7 +44,7 @@ export async function savePoli(formData: FormData) {
 
   revalidatePath("/admin");
   revalidatePath("/admin/poli");
-  showNotice(id ? "Perubahan poli berhasil disimpan." : "Poli berhasil ditambahkan.");
+  showSuccess(id ? "Perubahan poli berhasil disimpan." : "Poli berhasil ditambahkan.");
 }
 
 export async function deletePoli(formData: FormData) {
@@ -70,5 +74,5 @@ export async function deletePoli(formData: FormData) {
 
   revalidatePath("/admin");
   revalidatePath("/admin/poli");
-  showNotice("Poli berhasil dihapus.");
+  showSuccess("Poli berhasil dihapus.");
 }

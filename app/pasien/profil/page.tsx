@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SuccessNotice } from "@/app/_components/success-notice";
 import { requireRole } from "@/utils/auth";
 import { createClient } from "@/utils/supabase/server";
 import { saveProfile } from "./actions";
@@ -20,7 +21,7 @@ const labelClass = "grid gap-1.5 text-sm font-medium text-slate-700";
 export default async function ProfilPasienPage({
   searchParams,
 }: {
-  searchParams: Promise<{ notice?: string | string[] }>;
+  searchParams: Promise<{ notice?: string | string[]; success?: string | string[] }>;
 }) {
   const account = await requireRole("pasien");
   const params = await searchParams;
@@ -46,6 +47,7 @@ export default async function ProfilPasienPage({
           {params.notice}
         </p>
       )}
+      {typeof params.success === "string" && <SuccessNotice message={params.success} />}
       {error && (
         <p role="alert" className="rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700">
           Gagal memuat profil: {error.message}

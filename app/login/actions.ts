@@ -9,7 +9,7 @@ const loginSchema = z.object({
   password: z.string().min(6, "Password minimal 6 karakter"),
 });
 
-export type FormState = { error?: string } | undefined;
+export type FormState = { error?: string; success?: string } | undefined;
 
 export async function login(
   _prev: FormState,

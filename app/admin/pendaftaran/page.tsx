@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SuccessNotice } from "@/app/_components/success-notice";
 import { requireRole } from "@/utils/auth";
 import { createClient } from "@/utils/supabase/server";
 import { formatDate, formatDateTime, todayISO } from "@/utils/format";
@@ -58,6 +59,7 @@ export default async function PendaftaranAdminPage({
     status?: string | string[];
     page?: string | string[];
     notice?: string | string[];
+    success?: string | string[];
   }>;
 }) {
   await requireRole("admin");
@@ -198,6 +200,7 @@ export default async function PendaftaranAdminPage({
           {params.notice}
         </p>
       )}
+      {typeof params.success === "string" && <SuccessNotice message={params.success} />}
       {patientOptionsResult.error && (
         <p role="alert" className="rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700">
           Gagal memuat daftar pasien: {patientOptionsResult.error.message}

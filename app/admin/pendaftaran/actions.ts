@@ -24,6 +24,10 @@ function showNotice(message: string): never {
   redirect(`/admin/pendaftaran?notice=${encodeURIComponent(message)}`);
 }
 
+function showSuccess(message: string): never {
+  redirect(`/admin/pendaftaran?success=${encodeURIComponent(message)}`);
+}
+
 export async function savePendaftaran(formData: FormData) {
   await requireRole("admin");
   const id = field(formData, "id");
@@ -112,7 +116,7 @@ export async function savePendaftaran(formData: FormData) {
   revalidatePath("/admin");
   revalidatePath("/admin/pendaftaran");
   revalidatePath("/pasien");
-  showNotice(id ? "Perubahan pendaftaran berhasil disimpan." : "Pendaftaran berhasil ditambahkan.");
+  showSuccess(id ? "Perubahan pendaftaran berhasil disimpan." : "Pendaftaran berhasil ditambahkan.");
 }
 
 export async function deletePendaftaran(formData: FormData) {
@@ -133,5 +137,5 @@ export async function deletePendaftaran(formData: FormData) {
   revalidatePath("/admin");
   revalidatePath("/admin/pendaftaran");
   revalidatePath("/pasien");
-  showNotice("Pendaftaran berhasil dihapus.");
+  showSuccess("Pendaftaran berhasil dihapus.");
 }

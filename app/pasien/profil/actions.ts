@@ -25,6 +25,10 @@ function showNotice(message: string): never {
   redirect(`/pasien/profil?notice=${encodeURIComponent(message)}`);
 }
 
+function showSuccess(message: string): never {
+  redirect(`/pasien/profil?success=${encodeURIComponent(message)}`);
+}
+
 export async function saveProfile(formData: FormData) {
   const account = await requireRole("pasien");
 
@@ -61,5 +65,5 @@ export async function saveProfile(formData: FormData) {
   revalidatePath("/pasien/pendaftaran");
   revalidatePath("/admin/pasien");
   revalidatePath("/admin/pendaftaran");
-  showNotice(current ? "Profil berhasil diperbarui." : "Profil berhasil dilengkapi.");
+  showSuccess(current ? "Profil berhasil diperbarui." : "Profil berhasil dilengkapi.");
 }

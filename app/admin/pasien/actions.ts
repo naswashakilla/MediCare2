@@ -26,6 +26,10 @@ function showNotice(message: string): never {
   redirect(`/admin/pasien?notice=${encodeURIComponent(message)}`);
 }
 
+function showSuccess(message: string): never {
+  redirect(`/admin/pasien?success=${encodeURIComponent(message)}`);
+}
+
 export async function savePasien(formData: FormData) {
   await requireRole("admin");
   const id = field(formData, "id");
@@ -74,7 +78,7 @@ export async function savePasien(formData: FormData) {
   revalidatePath("/admin");
   revalidatePath("/admin/pasien");
   revalidatePath("/pasien");
-  showNotice(id ? "Perubahan pasien berhasil disimpan." : "Pasien berhasil ditambahkan.");
+  showSuccess(id ? "Perubahan pasien berhasil disimpan." : "Pasien berhasil ditambahkan.");
 }
 
 export async function deletePasien(formData: FormData) {
@@ -105,5 +109,5 @@ export async function deletePasien(formData: FormData) {
   revalidatePath("/admin");
   revalidatePath("/admin/pasien");
   revalidatePath("/pasien");
-  showNotice("Pasien berhasil dihapus.");
+  showSuccess("Pasien berhasil dihapus.");
 }

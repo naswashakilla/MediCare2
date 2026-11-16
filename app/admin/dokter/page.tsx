@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SuccessNotice } from "@/app/_components/success-notice";
 import { requireRole } from "@/utils/auth";
 import { createClient } from "@/utils/supabase/server";
 import { saveDokter } from "./actions";
@@ -26,7 +27,7 @@ const labelClass = "grid gap-1.5 text-sm font-medium text-slate-700";
 export default async function DokterPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string | string[]; page?: string | string[]; notice?: string | string[] }>;
+  searchParams: Promise<{ q?: string | string[]; page?: string | string[]; notice?: string | string[]; success?: string | string[] }>;
 }) {
   await requireRole("admin");
   const params = await searchParams;
@@ -120,6 +121,7 @@ export default async function DokterPage({
         <p className="mt-1 text-sm text-slate-500">Kelola poli dan jadwal praktik dokter.</p>
       </div>
       {params.notice && <p role="status" className="break-words rounded-xl border border-iced-denim/20 bg-frost p-3 text-sm text-iced-denim-dark">{params.notice}</p>}
+      {typeof params.success === "string" && <SuccessNotice message={params.success} />}
       {appointmentCountErrors.length > 0 && (
         <p role="alert" className="rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700">
           Gagal memeriksa pendaftaran beberapa dokter. Penghapusan dinonaktifkan sampai koneksi pulih.{" "}

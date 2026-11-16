@@ -23,6 +23,10 @@ function showNotice(message: string): never {
   redirect(`/pasien/pendaftaran?notice=${encodeURIComponent(message)}`);
 }
 
+function showSuccess(message: string): never {
+  redirect(`/pasien/pendaftaran?success=${encodeURIComponent(message)}`);
+}
+
 export async function savePendaftaran(formData: FormData) {
   const account = await requireRole("pasien");
   const id = field(formData, "id");
@@ -99,7 +103,7 @@ export async function savePendaftaran(formData: FormData) {
   revalidatePath("/pasien/pendaftaran");
   revalidatePath("/admin");
   revalidatePath("/admin/pendaftaran");
-  showNotice(id ? "Perubahan pendaftaran berhasil disimpan." : "Pendaftaran kunjungan berhasil dibuat.");
+  showSuccess(id ? "Perubahan pendaftaran berhasil disimpan." : "Pendaftaran kunjungan berhasil dibuat.");
 }
 
 export async function cancelPendaftaran(formData: FormData) {
@@ -141,5 +145,5 @@ export async function cancelPendaftaran(formData: FormData) {
   revalidatePath("/pasien/pendaftaran");
   revalidatePath("/admin");
   revalidatePath("/admin/pendaftaran");
-  showNotice("Pendaftaran berhasil dibatalkan.");
+  showSuccess("Pendaftaran berhasil dibatalkan.");
 }

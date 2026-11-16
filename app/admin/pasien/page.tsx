@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SuccessNotice } from "@/app/_components/success-notice";
 import { requireRole } from "@/utils/auth";
 import { createClient } from "@/utils/supabase/server";
 import { savePasien } from "./actions";
@@ -31,6 +32,7 @@ export default async function PasienAdminPage({
     q?: string | string[];
     page?: string | string[];
     notice?: string | string[];
+    success?: string | string[];
   }>;
 }) {
   await requireRole("admin");
@@ -170,6 +172,7 @@ export default async function PasienAdminPage({
           {params.notice}
         </p>
       )}
+      {typeof params.success === "string" && <SuccessNotice message={params.success} />}
       {accountError && (
         <p role="alert" className="rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700">
           Gagal memuat akun pasien: {accountError.message}

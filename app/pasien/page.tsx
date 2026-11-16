@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Icon, type IconName } from "@/app/_components/landing/icons";
+import { SuccessNotice } from "@/app/_components/success-notice";
 import { requireRole } from "@/utils/auth";
 import { createClient } from "@/utils/supabase/server";
 import { formatDate, todayISO } from "@/utils/format";
@@ -20,8 +21,13 @@ const statusLabels: Record<RegistrationStatus, string> = {
   dibatalkan: "Dibatalkan",
 };
 
-export default async function PasienPage() {
+export default async function PasienPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ success?: string | string[] }>;
+}) {
   const account = await requireRole("pasien");
+  const params = await searchParams;
   const supabase = await createClient();
   const today = todayISO();
 
@@ -84,6 +90,8 @@ export default async function PasienPage() {
           Daftarkan kunjungan Anda ke dokter yang tersedia dan pantau statusnya di satu tempat.
         </p>
       </section>
+
+      {typeof params.success === "string" && <SuccessNotice message={params.success} />}
 
       {errors.length > 0 && (
         <p role="alert" className="rounded-lg border border-rose-200 bg-rose-50 p-4 text-sm text-rose-800">
