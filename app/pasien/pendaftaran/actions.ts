@@ -80,6 +80,9 @@ export async function savePendaftaran(formData: FormData) {
       .eq("id_daftar", Number(id))
       .select("id_daftar")
       .maybeSingle();
+    if (error?.code === "P0001" && error.message.toLowerCase().includes("sudah terdaftar")) {
+      showNotice("Anda sudah memiliki pendaftaran aktif pada dokter dan tanggal tersebut.");
+    }
     if (error?.code === "P0001" && error.message.toLowerCase().includes("kuota dokter")) {
       showNotice(`Kuota dokter untuk tanggal tersebut sudah penuh (maksimal ${MAX_VISITS_PER_DOCTOR_PER_DAY} pasien).`);
     }
@@ -93,6 +96,9 @@ export async function savePendaftaran(formData: FormData) {
       keluhan: parsed.data.keluhan,
       status: "menunggu",
     });
+    if (error?.code === "P0001" && error.message.toLowerCase().includes("sudah terdaftar")) {
+      showNotice("Anda sudah memiliki pendaftaran aktif pada dokter dan tanggal tersebut.");
+    }
     if (error?.code === "P0001" && error.message.toLowerCase().includes("kuota dokter")) {
       showNotice(`Kuota dokter untuk tanggal tersebut sudah penuh (maksimal ${MAX_VISITS_PER_DOCTOR_PER_DAY} pasien).`);
     }

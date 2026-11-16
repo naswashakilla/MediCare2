@@ -9,7 +9,7 @@ Aplikasi web untuk mengelola data poliklinik dan pendaftaran kunjungan pasien. D
 - Ringkasan jumlah pasien, dokter, poli, dan pendaftaran.
 - Mengelola data pasien, dokter, poli, dan pendaftaran kunjungan.
 - Mendaftarkan pasien ke dokter melalui formulir pendaftaran di panel admin.
-- Membatasi pendaftaran hingga **15 pasien per dokter per tanggal**. Pendaftaran yang dibatalkan tidak dihitung dalam kuota.
+- Membatasi pendaftaran hingga **15 pasien per dokter per tanggal** dan mencegah pasien membuat pendaftaran aktif ganda pada dokter dan tanggal yang sama. Pendaftaran yang dibatalkan tidak dihitung dalam kuota.
 - Mencari dan memfilter data pendaftaran.
 - Membuat laporan berdasarkan periode, status, dan dokter; laporan dapat dicetak atau disimpan sebagai PDF, serta diekspor ke Word (`.doc`).
 
