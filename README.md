@@ -1,75 +1,108 @@
 # MediCare — Sistem Informasi Poliklinik
 
-Aplikasi web poliklinik berbasis **Next.js 16 (App Router)**, **Supabase** (PostgreSQL + Auth), dan **Tailwind CSS 4**.
+Aplikasi web untuk mengelola data poliklinik dan pendaftaran kunjungan pasien. Dibangun dengan Next.js App Router, Supabase, dan Tailwind CSS.
 
 ## Fitur
 
-- **Autentikasi** — login & registrasi (password di-hash oleh Supabase Auth), proteksi halaman berdasarkan peran (admin/pasien) lewat middleware + Row Level Security (RLS) di database.
-- **Panel Admin**
-  - CRUD **poli**, **dokter**, **pasien**, dan **pendaftaran** — lengkap dengan pencarian, filter status, dan pagination.
-  - **Laporan pendaftaran** dengan filter periode & status, dapat **dicetak/simpan PDF** (print dialog) dan **diekspor ke Word (.doc)**.
-- **Portal Pasien**
-  - Melengkapi & mengedit profil sendiri.
-  - Mendaftar kunjungan, melihat riwayat (pencarian + pagination), mengubah pendaftaran (selama status *menunggu*), dan membatalkan pendaftaran.
-- **Responsif** — tampilan menyesuaikan layar HP, tablet, dan desktop.
-- **Keamanan dasar** — password hashing, semua query memakai Supabase client (prepared statement/parameterized), validasi input dengan Zod di server + atribut HTML di form.
+### Admin
 
-## Struktur utama
+- Ringkasan jumlah pasien, dokter, poli, dan pendaftaran.
+- Mengelola data pasien, dokter, poli, dan pendaftaran kunjungan.
+- Mendaftarkan pasien ke dokter melalui formulir pendaftaran di panel admin.
+- Membatasi pendaftaran hingga **15 pasien per dokter per tanggal**. Pendaftaran yang dibatalkan tidak dihitung dalam kuota.
+- Mencari dan memfilter data pendaftaran.
+- Membuat laporan berdasarkan periode, status, dan dokter; laporan dapat dicetak atau disimpan sebagai PDF, serta diekspor ke Word (`.doc`).
 
-```
-app/
-  admin/          # Panel admin (pasien, dokter, poli, pendaftaran, laporan)
-  pasien/         # Portal pasien (profil, pendaftaran)
-  login|register/ # Autentikasi
-supabase/
-  migrations/     # Skema tabel + trigger + kebijakan RLS
-  seed.sql         # Data contoh
-utils/            # Supabase client, helper auth & format tanggal
-```
+### Pasien
+
+- Membuat akun, melengkapi, dan mengubah profil pasien.
+- Mendaftar kunjungan, melihat riwayat pendaftaran, mengubah pendaftaran berstatus *menunggu*, atau membatalkannya.
+- Melihat informasi dokter dan layanan klinik.
+
+### Teknologi dan keamanan
+
+- Next.js 16, React 19, TypeScript, dan Tailwind CSS 4.
+- Supabase untuk PostgreSQL, autentikasi, dan Row Level Security (RLS).
+- Validasi data pada server menggunakan Zod.
+- Pemeriksaan sesi melalui `proxy.ts`; akses data juga dibatasi dengan RLS.
+
+## Persyaratan
+
+- Node.js dan npm.
+- Project Supabase, atau Docker jika ingin menjalankan Supabase secara lokal.
 
 ## Menjalankan secara lokal
 
-1. **Buat project Supabase** di [supabase.com](https://supabase.com), lalu jalankan migration dan seed:
+1. Pasang dependensi:
+
    ```bash
-   npx supabase link --project-ref <PROJECT_REF>
-   npx supabase db push        # menjalankan folder supabase/migrations
-   # lalu jalankan isi supabase/seed.sql di SQL Editor (opsional, data contoh)
+   npm install
    ```
-2. **Salin environment variable** ke `.env.local`:
+
+2. Siapkan Supabase dengan salah satu cara berikut.
+
+   **Supabase hosted:** buat project di [supabase.com](https://supabase.com), lalu tautkan dan terapkan migrasi:
+
+   ```bash
+   npx supabase login
+   npx supabase link --project-ref <PROJECT_REF>
+   npx supabase db push
+   ```
+
+   **Supabase lokal:** jalankan perintah berikut (Docker harus aktif):
+
+   ```bash
+   npx supabase start
+   ```
+
+   Supabase lokal menerapkan migrasi saat database dimulai. Perintah tersebut juga menampilkan URL dan anon key untuk konfigurasi aplikasi.
+
+3. Buat file `.env.local` di root project:
+
    ```env
    NEXT_PUBLIC_SUPABASE_URL=https://<PROJECT_REF>.supabase.co
    NEXT_PUBLIC_SUPABASE_ANON_KEY=<ANON_KEY>
    ```
-   Keduanya ada di *Project Settings → API* pada dashboard Supabase.
-   Jika memakai Supabase lokal (`npx supabase start`), `supabase/config.toml` sudah mengatur
-   `auth.email.enable_confirmations = false`. Pengaturan ini tidak memengaruhi project Supabase
-   yang di-host di cloud.
-3. **Jalankan aplikasi**:
+
+   Untuk Supabase lokal, gunakan URL dan anon key yang ditampilkan oleh `npx supabase start`. Pada Supabase hosted, nilai tersebut tersedia di **Project Settings → API**.
+
+4. Jalankan aplikasi:
+
    ```bash
-   npm install
    npm run dev
    ```
-4. Login sebagai admin: ubah `role` menjadi `'admin'` pada baris profil Anda di tabel `profiles` (via SQL Editor) — atau jalankan:
-   ```sql
-   update public.profiles set role = 'admin' where email = 'email-anda';
-   ```
+
+   Buka [http://localhost:3000](http://localhost:3000).
+
+### Menjadikan akun sebagai admin
+
+Akun baru otomatis mendapat peran pasien. Daftarkan akun terlebih dahulu, lalu ubah peran hanya untuk akun tepercaya melalui SQL Editor Supabase:
+
+```sql
+update public.profiles
+set role = 'admin'
+where email = 'email-admin-anda';
+```
+
+Jangan memberikan peran admin kepada akun yang tidak tepercaya.
+
+## Perintah yang tersedia
+
+```bash
+npm run dev    # Menjalankan server pengembangan
+npm run lint   # Menjalankan ESLint
+npm run build  # Membuat build produksi
+npm run start  # Menjalankan build produksi
+```
 
 ## Deploy ke Vercel
 
-1. **Push kode ke GitHub** (repo ini sudah terhubung ke remote `origin`).
-2. Buka [vercel.com/new](https://vercel.com/new) → **Import** repository ini.
-3. Tambahkan **Environment Variables** (sama seperti `.env.local`):
-   - `NEXT_PUBLIC_SUPABASE_URL`
-   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-4. Klik **Deploy**.
-5. **Penting — konfigurasi Supabase agar auth jalan di domain produksi:**
-   - Buka dashboard Supabase → **Authentication → URL Configuration**.
-   - Set **Site URL** ke domain Vercel Anda, mis. `https://medicare2.vercel.app`.
-   - Tambahkan ke **Redirect URLs**: `https://<domain-vercel>/**` dan `http://localhost:3000/**` (untuk development).
-6. Jika tidak ingin registrasi harus konfirmasi email: buka **Authentication → Providers → Email**
-   lalu matikan **Confirm email**. Tanpa konfirmasi email, siapa pun dapat mendaftar menggunakan
-   alamat email yang belum terbukti mereka miliki; gunakan ini untuk development/demo, bukan
-   sebagai pengganti pengamanan akses data. Role pendaftar tetap `pasien`, dan migration
-   `20261114000000_protect_profile_role.sql` mencegah pengguna biasa mengubah role sendiri.
+1. Impor repository ini ke [Vercel](https://vercel.com/new).
+2. Tambahkan environment variable `NEXT_PUBLIC_SUPABASE_URL` dan `NEXT_PUBLIC_SUPABASE_ANON_KEY` pada pengaturan project Vercel.
+3. Deploy aplikasi.
+4. Di Supabase, buka **Authentication → URL Configuration**:
+   - Atur **Site URL** ke domain produksi.
+   - Tambahkan domain produksi dan `http://localhost:3000/**` ke **Redirect URLs** untuk kebutuhan pengembangan.
+5. Pastikan semua migrasi database telah diterapkan ke project Supabase menggunakan `npx supabase db push`.
 
-Setelah deploy, setiap push ke branch utama akan otomatis ter-deploy ulang.
+Vercel dapat menjalankan deploy baru secara otomatis setiap kali perubahan didorong ke branch yang terhubung.
