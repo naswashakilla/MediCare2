@@ -107,6 +107,9 @@ export async function savePendaftaran(formData: FormData) {
   const result = id
     ? await supabase.from("pendaftaran").update(payload).eq("id_daftar", Number(id)).select("id_daftar").maybeSingle()
     : await supabase.from("pendaftaran").insert(payload).select("id_daftar").single();
+  if (result.error?.code === "P0001" && result.error.message.toLowerCase().includes("sudah terdaftar")) {
+    showNotice("Pasien sudah memiliki pendaftaran aktif pada dokter dan tanggal tersebut.");
+  }
   if (result.error?.code === "P0001" && result.error.message.toLowerCase().includes("kuota dokter")) {
     showNotice(`Kuota dokter untuk tanggal tersebut sudah penuh (maksimal ${MAX_VISITS_PER_DOCTOR_PER_DAY} pasien).`);
   }

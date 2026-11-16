@@ -7,6 +7,7 @@ import { formatDate, formatDateTime, todayISO } from "@/utils/format";
 import { MAX_VISITS_PER_DOCTOR_PER_DAY } from "@/utils/pendaftaran";
 import { savePendaftaran } from "./actions";
 import { CancelPendaftaranButton } from "./cancel-button";
+import { PendaftaranSubmitButton } from "./submit-button";
 
 type RegistrationStatus = "menunggu" | "dikonfirmasi" | "selesai" | "dibatalkan";
 
@@ -151,9 +152,7 @@ export default async function PendaftaranPasienPage({
             className={inputClass}
           />
         </label>
-        <button className="rounded-xl bg-iced-denim px-4 py-2.5 font-semibold text-white shadow-sm shadow-iced-denim/25 transition hover:bg-iced-denim-dark sm:col-span-2">
-          {registration ? "Simpan perubahan" : "Daftar kunjungan"}
-        </button>
+        <PendaftaranSubmitButton editing={Boolean(registration)} />
       </form>
     );
   }
