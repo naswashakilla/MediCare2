@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { AutoSearchInput } from "@/app/_components/auto-search-input";
 import { SuccessNotice } from "@/app/_components/success-notice";
 import { requireRole } from "@/utils/auth";
 import { createClient } from "@/utils/supabase/server";
@@ -144,7 +145,7 @@ export default async function DokterPage({
 
       <section className="space-y-4">
         <form action="/admin/dokter" className="flex flex-col gap-2 sm:flex-row">
-          <input name="q" defaultValue={query} aria-label="Cari nama dokter" placeholder="Cari nama dokter..." className={`${inputClass} min-w-0 flex-1`} />
+          <AutoSearchInput name="q" defaultValue={query} aria-label="Cari nama dokter" placeholder="Cari nama dokter..." className={`${inputClass} min-w-0 flex-1`} />
           <button className="rounded-xl border border-iced-denim/20 bg-frost px-4 py-2.5 font-semibold text-iced-denim-dark transition hover:border-iced-denim/40 hover:bg-white">Cari</button>
         </form>
         {doctorResult.error ? (
