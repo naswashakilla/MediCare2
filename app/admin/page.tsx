@@ -57,9 +57,9 @@ export default async function AdminPage() {
           </p>
         )}
 
-        <section aria-label="Ringkasan data" className="mt-6 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+        <section aria-label="Ringkasan data" className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           {stats.map((stat) => (
-            <article key={stat.title}>
+            <article key={stat.title} className="rounded-xl bg-white/10 p-4">
               <div className="flex items-center justify-between text-blue-100">
                 <span className="text-sm font-medium">{stat.title}</span>
                 <Icon name={stat.icon} className="h-5 w-5" />
@@ -73,7 +73,7 @@ export default async function AdminPage() {
       <section aria-label="Aksi cepat">
         <Link
           href="/admin/pendaftaran#tambah-pendaftaran"
-          className="inline-flex rounded-lg bg-brilliant px-4 py-2.5 font-semibold text-white transition hover:bg-navy"
+          className="inline-flex rounded-lg bg-sunset px-4 py-2.5 font-semibold text-white transition hover:bg-mango"
         >
           Tambah pendaftaran
         </Link>
