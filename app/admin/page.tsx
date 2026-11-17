@@ -48,26 +48,26 @@ export default async function AdminPage() {
 
   return (
     <main className="mx-auto w-full max-w-7xl space-y-8 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
-      <section>
-        <h1 className="text-2xl font-bold text-navy">Dashboard admin</h1>
-      </section>
+      <section aria-label="Dashboard admin" className="rounded-xl bg-brilliant p-5 text-white shadow-sm sm:p-6">
+        <h1 className="text-2xl font-bold">Dashboard admin</h1>
 
-      {hasError && (
-        <p role="alert" className="rounded-lg border border-rose-200 bg-rose-50 p-4 text-sm text-rose-800">
-          Sebagian ringkasan gagal dimuat. Muat ulang halaman untuk mencoba kembali.
-        </p>
-      )}
+        {hasError && (
+          <p role="alert" className="mt-4 rounded-lg bg-white/10 p-4 text-sm text-white">
+            Sebagian ringkasan gagal dimuat. Muat ulang halaman untuk mencoba kembali.
+          </p>
+        )}
 
-      <section aria-label="Ringkasan data" className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        {stats.map((stat) => (
-          <article key={stat.title} className="rounded-xl border border-slate-200 bg-white p-5">
-            <div className="flex items-center justify-between text-slate-600">
-              <span className="text-sm font-medium">{stat.title}</span>
-              <Icon name={stat.icon} className="h-5 w-5 text-brilliant" />
-            </div>
-            <p className="mt-4 text-3xl font-bold text-navy">{stat.value ?? "—"}</p>
-          </article>
-        ))}
+        <section aria-label="Ringkasan data" className="mt-6 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+          {stats.map((stat) => (
+            <article key={stat.title}>
+              <div className="flex items-center justify-between text-blue-100">
+                <span className="text-sm font-medium">{stat.title}</span>
+                <Icon name={stat.icon} className="h-5 w-5" />
+              </div>
+              <p className="mt-3 text-3xl font-bold">{stat.value ?? "—"}</p>
+            </article>
+          ))}
+        </section>
       </section>
 
       <section aria-label="Aksi cepat">

@@ -28,10 +28,10 @@ export function AdminNavigation() {
             key={item.href}
             href={item.href}
             aria-current={active ? "page" : undefined}
-            className={`shrink-0 px-3 py-2.5 text-sm md:w-full ${
+            className={`shrink-0 rounded-lg px-3 py-2.5 text-sm transition md:w-full ${
               active
-                ? "font-semibold text-slate-900"
-                : "text-slate-600"
+                ? "bg-white/15 font-semibold text-white"
+                : "text-blue-100 hover:bg-white/10 hover:text-white"
             }`}
           >
             {item.label}

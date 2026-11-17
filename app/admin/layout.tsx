@@ -15,9 +15,13 @@ export default async function AdminLayout({
 
   return (
     <div className="min-h-screen bg-[#f6fafd] md:flex">
-      <aside className="border-b border-slate-200/70 bg-white print:hidden md:sticky md:top-0 md:flex md:h-screen md:w-64 md:shrink-0 md:flex-col md:border-b-0 md:border-r">
+      <aside className="border-b border-white/10 bg-brilliant print:hidden md:sticky md:top-0 md:flex md:h-screen md:w-64 md:shrink-0 md:flex-col md:border-b-0 md:border-r">
         <div className="px-5 py-5">
-          <Link href="/admin" aria-label="MediCare - panel admin" className="inline-flex">
+          <Link
+            href="/admin"
+            aria-label="MediCare - panel admin"
+            className="inline-flex rounded-lg bg-white px-2 py-1"
+          >
             <Image
               src="/logo-medicare.png"
               alt="MediCare"
@@ -29,7 +33,7 @@ export default async function AdminLayout({
           </Link>
         </div>
 
-        <div className="hidden px-5 pb-2 pt-4 text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 md:block">
+        <div className="hidden px-5 pb-2 pt-4 text-[10px] font-bold uppercase tracking-[0.2em] text-blue-200 md:block">
           Menu utama
         </div>
         <AdminNavigation />
@@ -50,10 +54,7 @@ export default async function AdminLayout({
                 />
               </span>
               <div>
-                <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-400">
-                  Panel administrasi
-                </p>
-                <p className="mt-0.5 text-sm font-semibold text-slate-800">Sistem Informasi Poliklinik</p>
+                <p className="text-sm font-semibold text-slate-800">Panel Administrasi</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
