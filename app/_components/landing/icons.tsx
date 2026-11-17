@@ -4,6 +4,7 @@ export type IconName =
   | "activity"
   | "arrow-right"
   | "baby"
+  | "bell"
   | "building"
   | "calendar"
   | "car"
@@ -40,6 +41,12 @@ const icons: Record<IconName, ReactNode> = {
       <circle cx="12" cy="8" r="4" />
       <path d="M5 21a7 7 0 0 1 14 0" />
       <path d="M10 8h.01M14 8h.01M10.5 10.5c.9.7 2.1.7 3 0" />
+    </>
+  ),
+  bell: (
+    <>
+      <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9" />
+      <path d="M10 21h4" />
     </>
   ),
   building: (

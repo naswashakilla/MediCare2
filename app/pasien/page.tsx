@@ -14,12 +14,6 @@ type RegistrationSummary = {
   dokter: { nama_dokter: string; poli: { nama_poli: string } | null } | null;
 };
 
-type ConfirmedRegistration = {
-  id_daftar: number;
-  tgl_kunjungan: string;
-  dokter: { nama_dokter: string; poli: { nama_poli: string } | null } | null;
-};
-
 const statusLabels: Record<RegistrationStatus, string> = {
   menunggu: "Menunggu",
   dikonfirmasi: "Dikonfirmasi",
@@ -49,7 +43,7 @@ export default async function PasienPage({
   const polis = (poliResult.data ?? []) as { id_poli: number; nama_poli: string }[];
 
   const patientId = patient?.id_pasien ?? 0;
-  const [totalResult, waitingResult, upcomingResult, latestResult, confirmedResult] = await Promise.all([
+  const [totalResult, waitingResult, upcomingResult, latestResult] = await Promise.all([
     supabase.from("pendaftaran").select("id_daftar", { count: "exact", head: true }).eq("id_pasien", patientId),
     supabase
       .from("pendaftaran")
@@ -68,16 +62,8 @@ export default async function PasienPage({
       .eq("id_pasien", patientId)
       .order("id_daftar", { ascending: false })
       .limit(3),
-    supabase
-      .from("pendaftaran")
-      .select("id_daftar,tgl_kunjungan,dokter(nama_dokter,poli(nama_poli))")
-      .eq("id_pasien", patientId)
-      .eq("status", "dikonfirmasi")
-      .order("id_daftar", { ascending: false })
-      .limit(5),
   ]);
   const latestRegistrations = (latestResult.data ?? []) as unknown as RegistrationSummary[];
-  const confirmedRegistrations = (confirmedResult.data ?? []) as unknown as ConfirmedRegistration[];
 
   const stats: { title: string; value: number; icon: IconName }[] = [
     { title: "Total pendaftaran", value: totalResult.count ?? 0, icon: "calendar" },
@@ -91,7 +77,6 @@ export default async function PasienPage({
     waitingResult.error,
     upcomingResult.error,
     latestResult.error,
-    confirmedResult.error,
   ].filter(Boolean);
 
   return (
@@ -107,34 +92,6 @@ export default async function PasienPage({
       </section>
 
       {typeof params.success === "string" && <SuccessNotice message={params.success} />}
-
-      {confirmedRegistrations.length > 0 && (
-        <section
-          aria-label="Pemberitahuan kunjungan dikonfirmasi"
-          aria-live="polite"
-          className="rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-emerald-900 sm:p-5"
-          role="status"
-        >
-          <h2 className="font-semibold">Pendaftaran kunjungan Anda telah dikonfirmasi</h2>
-          <ul className="mt-2 space-y-2 text-sm">
-            {confirmedRegistrations.map((registration) => (
-              <li key={registration.id_daftar}>
-                {registration.dokter?.nama_dokter ?? "Dokter tidak diketahui"}
-                {" · "}
-                {registration.dokter?.poli?.nama_poli ?? "Poli"}
-                {" · "}
-                {formatDate(registration.tgl_kunjungan)}
-              </li>
-            ))}
-          </ul>
-          <Link
-            href="/pasien/pendaftaran"
-            className="mt-3 inline-block text-sm font-semibold underline underline-offset-2"
-          >
-            Lihat detail pendaftaran
-          </Link>
-        </section>
-      )}
 
       {errors.length > 0 && (
         <p role="alert" className="rounded-lg border border-rose-200 bg-rose-50 p-4 text-sm text-rose-800">

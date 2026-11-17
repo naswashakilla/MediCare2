@@ -3,6 +3,9 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { logout } from "@/app/actions/auth";
 import { requireRole } from "@/utils/auth";
+import { formatDate } from "@/utils/format";
+import { createClient } from "@/utils/supabase/server";
+import { PatientNotificationButton, type PatientNotification } from "./notification-button";
 import { PatientNavigation } from "./navigation";
 
 export default async function PatientLayout({
@@ -12,6 +15,37 @@ export default async function PatientLayout({
 }) {
   const profile = await requireRole("pasien");
   const initial = profile.nama_user.trim().charAt(0).toUpperCase() || "P";
+  const supabase = await createClient();
+  const { data: patientRows, error: patientError } = await supabase
+    .from("pasien")
+    .select("id_pasien")
+    .eq("id_user", profile.id_user)
+    .limit(1);
+
+  let notifications: PatientNotification[] = [];
+  let notificationError = Boolean(patientError);
+
+  if (!patientError && patientRows?.[0]) {
+    const { data, error } = await supabase
+      .from("pendaftaran")
+      .select("id_daftar,tgl_kunjungan,dokter(nama_dokter,poli(nama_poli))")
+      .eq("id_pasien", patientRows[0].id_pasien)
+      .eq("status", "dikonfirmasi")
+      .order("id_daftar", { ascending: false })
+      .limit(5);
+
+    notificationError = Boolean(error);
+    notifications = ((data ?? []) as unknown as {
+      id_daftar: number;
+      tgl_kunjungan: string;
+      dokter: { nama_dokter: string; poli: { nama_poli: string } | null } | null;
+    }[]).map((registration) => ({
+      id: registration.id_daftar,
+      doctor: registration.dokter?.nama_dokter ?? "Dokter tidak diketahui",
+      clinic: registration.dokter?.poli?.nama_poli ?? "Poli",
+      visitDate: formatDate(registration.tgl_kunjungan),
+    }));
+  }
 
   return (
     <div className="min-h-screen bg-[#f6fafd]">
@@ -37,6 +71,7 @@ export default async function PatientLayout({
             Portal Pasien
           </p>
           <div className="ml-auto flex items-center gap-3">
+            <PatientNotificationButton notifications={notifications} hasError={notificationError} />
             <div className="hidden text-right sm:block">
               <p className="text-sm font-semibold text-slate-800">{profile.nama_user}</p>
               <p className="text-xs text-slate-500">{profile.email}</p>
