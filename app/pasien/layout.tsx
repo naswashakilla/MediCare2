@@ -71,7 +71,11 @@ export default async function PatientLayout({
             Portal Pasien
           </p>
           <div className="ml-auto flex items-center gap-3">
-            <PatientNotificationButton notifications={notifications} hasError={notificationError} />
+            <PatientNotificationButton
+              notifications={notifications}
+              hasError={notificationError}
+              userId={profile.id_user}
+            />
             <div className="hidden text-right sm:block">
               <p className="text-sm font-semibold text-slate-800">{profile.nama_user}</p>
               <p className="text-xs text-slate-500">{profile.email}</p>
