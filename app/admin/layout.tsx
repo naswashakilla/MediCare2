@@ -27,8 +27,8 @@ export default async function AdminLayout({
               alt="MediCare"
               width={1774}
               height={887}
-              sizes="160px"
-              className="h-9 w-auto"
+              sizes="112px"
+              className="h-14 w-auto"
             />
           </Link>
         </div>
