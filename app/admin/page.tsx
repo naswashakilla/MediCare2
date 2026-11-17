@@ -3,31 +3,26 @@ import { Icon, type IconName } from "@/app/_components/landing/icons";
 import { requireRole } from "@/utils/auth";
 import { createClient } from "@/utils/supabase/server";
 
-const modules: { href: string; title: string; icon: IconName }[] = [
+const modules: { href: string; title: string }[] = [
   {
     href: "/admin/pasien",
     title: "Data pasien",
-    icon: "users",
   },
   {
     href: "/admin/dokter",
     title: "Data dokter",
-    icon: "stethoscope",
   },
   {
     href: "/admin/poli",
     title: "Data poli",
-    icon: "building",
   },
   {
     href: "/admin/pendaftaran",
     title: "Pendaftaran",
-    icon: "calendar",
   },
   {
     href: "/admin/laporan",
     title: "Laporan",
-    icon: "activity",
   },
 ];
 
@@ -91,18 +86,9 @@ export default async function AdminPage() {
             <li key={module.href}>
               <Link
                 href={module.href}
-                className="group flex min-h-24 items-center justify-between rounded-xl border border-slate-200 bg-white p-5 text-navy transition hover:border-brilliant hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brilliant"
+                className="flex min-h-24 items-center rounded-xl border border-slate-200 bg-white p-5 font-semibold text-navy transition hover:border-brilliant hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brilliant"
               >
-                <span className="flex items-center gap-4">
-                  <span className="flex h-11 w-11 items-center justify-center rounded-lg bg-blue-50 text-brilliant">
-                    <Icon name={module.icon} className="h-5 w-5" />
-                  </span>
-                  <span className="font-semibold">{module.title}</span>
-                </span>
-                <Icon
-                  name="arrow-right"
-                  className="h-5 w-5 text-slate-400 transition group-hover:translate-x-1 group-hover:text-brilliant"
-                />
+                {module.title}
               </Link>
             </li>
           ))}
