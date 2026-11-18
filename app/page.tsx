@@ -63,13 +63,6 @@ const doctorAccents = [
   "border-t-ocean",
 ];
 
-const serviceTints = [
-  "bg-sunset/10 text-sunset",
-  "bg-brilliant/10 text-brilliant",
-  "bg-mango/25 text-navy",
-  "bg-ocean text-brilliant",
-];
-
 const steps = [
   "Masuk atau daftar akun MediCare.",
   "Pilih dokter dan tanggal kunjungan.",
@@ -434,182 +427,221 @@ export default async function Home() {
           </div>
         </section>
 
-        {/* Dokter aktif */}
-        <section id="dokter-aktif" className="scroll-mt-24 bg-white py-16 sm:py-20">
-          <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-            <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
-              <SectionHeading
-                eyebrow="Dokter Aktif"
-                title="Sedang praktik hari ini"
-                description={`Per ${waktu.tanggalLabel} pukul ${waktu.jamLabel} WIB. Status mengikuti hari dan jam praktik yang terdaftar.`}
-              />
-              <div className="inline-flex w-fit items-center gap-2.5 rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-bold text-emerald-800">
-                <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-500" />
-                {activeDoctors.length} dokter aktif
-              </div>
+        <div className="relative isolate overflow-hidden bg-[linear-gradient(135deg,#eaf7fb_0%,#f8faff_52%,#edf4ff_100%)] py-8 sm:py-10">
+          <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
+            <span className="absolute -left-20 bottom-8 h-48 w-48 rounded-full bg-ocean/30 blur-3xl" />
+            <span className="absolute -right-20 top-8 h-56 w-56 rounded-full bg-sky-200/40 blur-3xl" />
+          </div>
+
+          <div className="relative mx-auto max-w-6xl space-y-6 px-4 sm:px-6 lg:px-8">
+            <div className="grid gap-4 lg:grid-cols-2">
+              {/* Dokter aktif */}
+              <section
+                id="dokter-aktif"
+                className="scroll-mt-24 rounded-[1.75rem] border border-white/80 bg-white/75 p-5 shadow-[0_12px_30px_rgba(37,60,150,0.08)] backdrop-blur-sm sm:p-7"
+              >
+                <div className="flex flex-wrap items-start justify-between gap-4">
+                  <div className="max-w-sm">
+                    <span className="mb-3 block h-1 w-12 rounded-full bg-brilliant" />
+                    <h2 className="text-2xl font-extrabold tracking-tight text-navy sm:text-3xl">
+                      Dokter Aktif
+                    </h2>
+                    <p className="mt-2 text-sm leading-6 text-navy/70">
+                      Dokter yang sedang bertugas hari ini di Poliklinik MediCare.
+                    </p>
+                  </div>
+                  <Link
+                    href="#doctors"
+                    className="inline-flex items-center gap-1.5 rounded-full border border-brilliant/30 px-3.5 py-2 text-xs font-bold text-brilliant transition-colors hover:bg-brilliant hover:text-white"
+                  >
+                    Lihat Semua Dokter
+                    <Icon name="arrow-right" className="h-4 w-4" />
+                  </Link>
+                </div>
+
+                {activeDoctors.length === 0 && scheduledToday.length > 0 && (
+                  <p className="mt-4 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2.5 text-xs leading-5 text-amber-900">
+                    Belum ada dokter yang sedang praktik. Berikut dokter yang terjadwal hari ini.
+                  </p>
+                )}
+
+                {doctorsToShow.length > 0 ? (
+                  <div className="mt-5 space-y-3">
+                    {doctorsToShow.map((doctor) => (
+                      <article
+                        key={doctor.id_dokter}
+                        className="rounded-2xl border border-brilliant/10 bg-white/90 p-4 shadow-[0_5px_16px_rgba(37,60,150,0.06)]"
+                      >
+                        <div className="flex items-center gap-3.5">
+                          <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-[#a7c8f2] text-xl font-extrabold text-white">
+                            {doctorInitials(doctor.nama_dokter)}
+                          </span>
+                          <span className="h-14 w-px shrink-0 bg-brilliant/20" />
+                          <div className="min-w-0 flex-1">
+                            <div className="flex flex-wrap items-center justify-between gap-2">
+                              <h3 className="truncate font-bold text-navy">{doctor.nama_dokter}</h3>
+                              <span
+                                className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold ${
+                                  doctor.statusPraktik === "praktik"
+                                    ? "bg-emerald-50 text-emerald-700"
+                                    : "bg-amber-50 text-amber-700"
+                                }`}
+                              >
+                                <span
+                                  className={`h-2 w-2 rounded-full ${
+                                    doctor.statusPraktik === "praktik" ? "bg-emerald-500" : "bg-amber-500"
+                                  }`}
+                                />
+                                {doctor.statusPraktik === "praktik" ? "Aktif" : "Akan datang"}
+                              </span>
+                            </div>
+                            <p className="mt-1 text-sm font-medium text-brilliant">
+                              {doctor.spesialis || "Dokter umum"}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 border-t border-brilliant/10 pt-3 text-xs font-medium text-navy/80">
+                          <span className="inline-flex items-center gap-2">
+                            <Icon name="calendar" className="h-4 w-4 text-brilliant" />
+                            Hari ini
+                          </span>
+                          <span className="inline-flex items-center gap-2">
+                            <Icon name="clock" className="h-4 w-4 text-brilliant" />
+                            {formatSchedule(doctor)}
+                          </span>
+                        </div>
+                      </article>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="mt-5 rounded-2xl border border-dashed border-brilliant/25 bg-white/80 p-6 text-center text-sm text-navy/60">
+                    {hasDoctorError
+                      ? "Status dokter belum dapat dimuat. Silakan muat ulang halaman."
+                      : "Belum ada dokter yang praktik hari ini."}
+                  </p>
+                )}
+              </section>
+
+              {/* Antrian hari ini */}
+              <section
+                id="antrian"
+                className="scroll-mt-24 rounded-[1.75rem] border border-white/80 bg-white/75 p-5 shadow-[0_12px_30px_rgba(37,60,150,0.08)] backdrop-blur-sm sm:p-7"
+              >
+                <div className="flex flex-wrap items-start justify-between gap-4">
+                  <div className="max-w-sm">
+                    <span className="mb-3 block h-1 w-12 rounded-full bg-brilliant" />
+                    <h2 className="text-2xl font-extrabold tracking-tight text-navy sm:text-3xl">
+                      Antrean Hari Ini
+                    </h2>
+                    <p className="mt-2 text-sm leading-6 text-navy/70">
+                      Nomor antrean pasien yang mendaftar untuk kunjungan hari ini.
+                    </p>
+                  </div>
+                  <div className="flex gap-1.5 rounded-2xl bg-[#edf4ff] p-2 text-center">
+                    {[
+                      { label: "Total", value: totalAntrian, color: "text-navy" },
+                      { label: "Berjalan", value: antrianBerjalan, color: "text-brilliant" },
+                      { label: "Selesai", value: antrianSelesai, color: "text-emerald-700" },
+                    ].map((stat) => (
+                      <div key={stat.label} className="min-w-14 px-1.5 sm:min-w-16 sm:px-2">
+                        <span className={`block text-xl font-extrabold ${stat.color}`}>{stat.value}</span>
+                        <span className="text-[10px] font-medium text-navy/65 sm:text-xs">
+                          {stat.label}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {queueGroups.length > 0 ? (
+                  <div className="mt-5 space-y-3">
+                    {queueGroups.flatMap((group) =>
+                      group.entries.map((entry) => (
+                        <article
+                          key={entry.id_daftar}
+                          className="flex items-center gap-4 rounded-2xl border border-brilliant/10 bg-white/90 p-4 shadow-[0_5px_16px_rgba(37,60,150,0.06)]"
+                        >
+                          <div className="flex w-24 shrink-0 flex-col items-center border-r border-brilliant/20 pr-4">
+                            <span className="text-4xl font-extrabold leading-none tracking-tight text-brilliant">
+                              {formatNoAntrian(entry.no_antrian)}
+                            </span>
+                            <span
+                              className={`mt-2 rounded-full bg-[#edf4ff] px-3 py-1 text-xs font-bold ${
+                                queueStatusStyles[entry.status]
+                              }`}
+                            >
+                              {queueStatusLabels[entry.status]}
+                            </span>
+                          </div>
+                          <div className="min-w-0">
+                            <h3 className="truncate font-bold text-navy">{group.nama_dokter}</h3>
+                            <p className="mt-1 text-sm text-navy/70">{group.nama_poli}</p>
+                            <p className="mt-2 inline-flex items-center gap-2 text-xs font-medium text-navy/75">
+                              <Icon name="clock" className="h-4 w-4 shrink-0 text-brilliant" />
+                              Status: {queueStatusLabels[entry.status]}
+                            </p>
+                          </div>
+                        </article>
+                      )),
+                    )}
+                  </div>
+                ) : (
+                  <p className="mt-5 rounded-2xl border border-dashed border-brilliant/25 bg-white/80 p-6 text-center text-sm text-navy/60">
+                    {hasQueueError
+                      ? "Data antrean belum dapat dimuat. Silakan muat ulang halaman."
+                      : "Belum ada antrean untuk hari ini."}
+                  </p>
+                )}
+              </section>
             </div>
 
-            {activeDoctors.length === 0 && scheduledToday.length > 0 && (
-              <p className="mt-6 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
-                Belum ada dokter yang sedang praktik saat ini. Berikut dokter yang terjadwal hari ini.
-              </p>
-            )}
+            {/* Layanan yang tersedia */}
+            <section
+              id="services"
+              className="scroll-mt-24 rounded-[1.75rem] border border-white/80 bg-white/65 p-5 shadow-[0_12px_30px_rgba(37,60,150,0.07)] backdrop-blur-sm sm:p-7"
+            >
+              <div>
+                <span className="mb-3 block h-1 w-12 rounded-full bg-brilliant" />
+                <h2 className="text-2xl font-extrabold tracking-tight text-navy sm:text-3xl">
+                  Layanan yang Tersedia
+                </h2>
+                <p className="mt-1.5 text-sm text-navy/70">
+                  Layanan MediCare disesuaikan dengan poli yang tersedia di klinik.
+                </p>
+              </div>
 
-            {doctorsToShow.length > 0 ? (
-              <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {doctorsToShow.map((doctor) => (
-                  <article key={doctor.id_dokter} className="rounded-lg border-2 border-ocean bg-white p-5">
-                    <div className="flex items-start gap-4">
-                      <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-brilliant text-lg font-extrabold text-white">
-                        {doctorInitials(doctor.nama_dokter)}
+              {polis.length > 0 ? (
+                <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                  {polis.map((poli) => (
+                    <article
+                      key={poli.id_poli}
+                      className="flex min-h-24 items-center gap-3.5 rounded-2xl border border-brilliant/10 bg-white/85 p-3.5 shadow-[0_5px_16px_rgba(37,60,150,0.05)]"
+                    >
+                      <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-[#e8f1ff] text-brilliant">
+                        <Icon name={serviceIcon(poli.nama_poli)} className="h-6 w-6" />
                       </span>
                       <div className="min-w-0 flex-1">
-                        <div className="flex items-start justify-between gap-2">
-                          <h3 className="truncate text-lg font-bold text-navy">{doctor.nama_dokter}</h3>
-                          <span
-                            className={`shrink-0 rounded-full px-2 py-1 text-[11px] font-bold ${
-                              doctor.statusPraktik === "praktik"
-                                ? "bg-emerald-50 text-emerald-700"
-                                : "bg-amber-50 text-amber-700"
-                            }`}
-                          >
-                            {doctor.statusPraktik === "praktik" ? "Aktif" : "Akan datang"}
-                          </span>
-                        </div>
-                        <p className="mt-1 text-sm font-semibold text-brilliant">
-                          {doctor.spesialis || "Dokter umum"}
+                        <h3 className="font-bold text-navy">{poli.nama_poli}</h3>
+                        <p className="mt-1 line-clamp-2 text-xs leading-4 text-navy/70">
+                          {poli.keterangan || "Pemeriksaan dan konsultasi kesehatan."}
                         </p>
                       </div>
-                    </div>
-
-                    <div className="mt-4 space-y-2 border-t-2 border-ocean pt-4 text-sm text-navy/70">
-                      <p className="flex items-center gap-2">
-                        <Icon name="building" className="h-4 w-4 shrink-0 text-brilliant" />
-                        {doctor.poli?.nama_poli ?? "Poli MediCare"}
-                      </p>
-                      <p className="flex items-center gap-2">
-                        <Icon name="clock" className="h-4 w-4 shrink-0 text-brilliant" />
-                        {formatSchedule(doctor)}
-                      </p>
-                    </div>
-                  </article>
-                ))}
-              </div>
-            ) : (
-              <p className="mt-10 rounded-lg border-2 border-dashed border-brilliant/25 bg-white p-8 text-center text-base text-navy/60">
-                {hasDoctorError
-                  ? "Status dokter belum dapat dimuat. Silakan muat ulang halaman."
-                  : "Belum ada dokter yang praktik hari ini."}
-              </p>
-            )}
-          </div>
-        </section>
-
-        {/* Antrian hari ini */}
-        <section id="antrian" className="scroll-mt-24 bg-ocean/60 py-16 sm:py-20">
-          <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-            <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
-              <SectionHeading
-                eyebrow="Antrian Hari Ini"
-                title="Pantau antrian kunjungan"
-                description="Nomor antrian pasien yang mendaftar untuk kunjungan hari ini, dikelompokkan per dokter."
-              />
-              <div className="flex flex-wrap gap-2">
-                <div className="min-w-20 rounded-lg bg-white px-4 py-2 text-center">
-                  <span className="block text-xl font-extrabold text-navy">{totalAntrian}</span>
-                  <span className="text-xs font-semibold text-navy/60">Total</span>
-                </div>
-                <div className="min-w-20 rounded-lg bg-white px-4 py-2 text-center">
-                  <span className="block text-xl font-extrabold text-brilliant">{antrianBerjalan}</span>
-                  <span className="text-xs font-semibold text-navy/60">Berjalan</span>
-                </div>
-                <div className="min-w-20 rounded-lg bg-white px-4 py-2 text-center">
-                  <span className="block text-xl font-extrabold text-emerald-700">{antrianSelesai}</span>
-                  <span className="text-xs font-semibold text-navy/60">Selesai</span>
-                </div>
-              </div>
-            </div>
-
-            {queueGroups.length > 0 ? (
-              <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {queueGroups.map((group) => (
-                  <article key={group.id_dokter} className="rounded-2xl border-2 border-white bg-white p-5">
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="min-w-0">
-                        <h3 className="truncate font-bold text-navy">{group.nama_dokter}</h3>
-                        <p className="mt-0.5 text-sm text-navy/60">{group.nama_poli}</p>
-                      </div>
-                      <span className="shrink-0 rounded-lg bg-ocean px-2.5 py-1 text-xs font-bold text-brilliant">
-                        {group.entries.length} antrian
+                      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#edf4ff] text-brilliant">
+                        <Icon name="arrow-right" className="h-4 w-4" />
                       </span>
-                    </div>
-                    <div className="mt-4 flex flex-wrap gap-2 border-t-2 border-ocean pt-4">
-                      {group.entries.map((entry) => (
-                        <div
-                          key={entry.id_daftar}
-                          className="min-w-[4.5rem] rounded-lg border border-ocean bg-frost/50 px-2.5 py-2 text-center"
-                        >
-                          <span className="block text-base font-extrabold text-brilliant">
-                            {formatNoAntrian(entry.no_antrian)}
-                          </span>
-                          <span className={`mt-1 block text-[10px] font-semibold ${queueStatusStyles[entry.status]}`}>
-                            {queueStatusLabels[entry.status]}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  </article>
-                ))}
-              </div>
-            ) : (
-              <p className="mt-10 rounded-lg border-2 border-dashed border-brilliant/25 bg-white p-8 text-center text-base text-navy/60">
-                {hasQueueError
-                  ? "Data antrian belum dapat dimuat. Silakan muat ulang halaman."
-                  : "Belum ada antrian untuk hari ini."}
-              </p>
-            )}
+                    </article>
+                  ))}
+                </div>
+              ) : (
+                <p className="mt-5 rounded-2xl border border-dashed border-brilliant/25 bg-white/80 p-6 text-center text-sm text-navy/60">
+                  {hasPoliError
+                    ? "Data layanan belum dapat dimuat. Silakan muat ulang halaman."
+                    : "Belum ada layanan yang ditambahkan admin."}
+                </p>
+              )}
+            </section>
           </div>
-        </section>
-
-        {/* Our Services */}
-        <section id="services" className="scroll-mt-24 bg-ocean py-16 sm:py-20">
-          <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-            <SectionHeading
-              eyebrow="Our Services"
-              title="Layanan yang tersedia"
-              description="Layanan di MediCare disesuaikan dengan poli yang tersedia di klinik. Pilih layanan yang sesuai dengan kebutuhan Anda."
-            />
-
-            {polis.length > 0 ? (
-              <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {polis.map((poli, index) => (
-                  <article
-                    key={poli.id_poli}
-                    className="rounded-lg border-2 border-white bg-white p-5"
-                  >
-                    <span
-                      className={`flex h-12 w-12 items-center justify-center rounded-lg ${
-                        serviceTints[index % serviceTints.length]
-                      }`}
-                    >
-                      <Icon name={serviceIcon(poli.nama_poli)} className="h-6 w-6" />
-                    </span>
-                    <h3 className="mt-4 text-lg font-bold text-navy">{poli.nama_poli}</h3>
-                    <p className="mt-2 text-sm leading-6 text-navy/70">
-                      {poli.keterangan || "Layanan pemeriksaan dan konsultasi kesehatan."}
-                    </p>
-                  </article>
-                ))}
-              </div>
-            ) : (
-              <p className="mt-10 rounded-lg border-2 border-dashed border-brilliant/25 bg-white p-8 text-center text-base text-navy/60">
-                {hasPoliError
-                  ? "Data layanan belum dapat dimuat. Silakan muat ulang halaman."
-                  : "Belum ada layanan yang ditambahkan admin."}
-              </p>
-            )}
-          </div>
-        </section>
+        </div>
 
         {/* Appointment */}
         <section id="appointment" className="scroll-mt-24 bg-white py-16 sm:py-20">
