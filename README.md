@@ -1,108 +1,111 @@
 # MediCare — Sistem Informasi Poliklinik
 
-Aplikasi web untuk mengelola data poliklinik dan pendaftaran kunjungan pasien. Dibangun dengan Next.js App Router, Supabase, dan Tailwind CSS.
+MediCare adalah aplikasi web poliklinik yang saya buat untuk membantu mengelola data klinik dan pendaftaran kunjungan pasien. Aplikasi ini memiliki dua jenis akun, yaitu admin dan pasien.
 
 ## Fitur
 
 ### Admin
 
-- Ringkasan jumlah pasien, dokter, poli, dan pendaftaran.
-- Mengelola data pasien, dokter, poli, dan pendaftaran kunjungan.
-- Mendaftarkan pasien ke dokter melalui formulir pendaftaran di panel admin.
-- Membatasi pendaftaran hingga **15 pasien per dokter per tanggal** dan mencegah pasien membuat pendaftaran aktif ganda pada dokter dan tanggal yang sama. Pendaftaran yang dibatalkan tidak dihitung dalam kuota.
-- Mencari dan memfilter data pendaftaran.
-- Membuat laporan berdasarkan periode, status, dan dokter; laporan dapat dicetak atau disimpan sebagai PDF, serta diekspor ke Word (`.doc`).
+- Melihat ringkasan jumlah pasien, dokter, poli, dan pendaftaran.
+- Mengelola data pasien, dokter, poli, dan pendaftaran.
+- Mencari data dan berpindah halaman pada daftar.
+- Mengatur status pendaftaran.
+- Membuat laporan pendaftaran berdasarkan tanggal, status, dan dokter.
+- Mencetak laporan atau menyimpannya sebagai PDF melalui browser, serta mengekspor laporan ke Word (`.doc`).
 
 ### Pasien
 
-- Membuat akun, melengkapi, dan mengubah profil pasien.
-- Mendaftar kunjungan, melihat riwayat pendaftaran, mengubah pendaftaran berstatus *menunggu*, atau membatalkannya.
-- Melihat informasi dokter dan layanan klinik.
+- Membuat akun dan mengelola profil.
+- Melihat informasi dokter dan poli.
+- Membuat pendaftaran kunjungan, melihat riwayat, mengubah pendaftaran yang masih menunggu, atau membatalkannya.
+- Melihat nomor antrean kunjungan.
 
-### Teknologi dan keamanan
+## Teknologi
 
 - Next.js 16, React 19, TypeScript, dan Tailwind CSS 4.
-- Supabase untuk PostgreSQL, autentikasi, dan Row Level Security (RLS).
-- Validasi data pada server menggunakan Zod.
-- Pemeriksaan sesi melalui `proxy.ts`; akses data juga dibatasi dengan RLS.
+- Supabase untuk database PostgreSQL, autentikasi, dan Row Level Security (RLS).
+- Zod untuk validasi input di server.
 
-## Persyaratan
+Password akun dikelola oleh Supabase Auth, termasuk proses hashing-nya. Aplikasi menggunakan Supabase client untuk mengakses data dan RLS untuk membatasi akses sesuai peran. Akun yang baru mendaftar mendapat peran pasien; pembuatan admin dilakukan secara manual oleh pemilik project.
+
+## Menjalankan aplikasi
+
+### Yang dibutuhkan
 
 - Node.js dan npm.
-- Project Supabase, atau Docker jika ingin menjalankan Supabase secara lokal.
+- Project Supabase. Supabase lokal juga bisa digunakan, tetapi memerlukan Docker.
 
-## Menjalankan secara lokal
+### 1. Pasang dependensi
 
-1. Pasang dependensi:
-
-   ```bash
-   npm install
-   ```
-
-2. Siapkan Supabase dengan salah satu cara berikut.
-
-   **Supabase hosted:** buat project di [supabase.com](https://supabase.com), lalu tautkan dan terapkan migrasi:
-
-   ```bash
-   npx supabase login
-   npx supabase link --project-ref <PROJECT_REF>
-   npx supabase db push
-   ```
-
-   **Supabase lokal:** jalankan perintah berikut (Docker harus aktif):
-
-   ```bash
-   npx supabase start
-   ```
-
-   Supabase lokal menerapkan migrasi saat database dimulai. Perintah tersebut juga menampilkan URL dan anon key untuk konfigurasi aplikasi.
-
-3. Buat file `.env.local` di root project:
-
-   ```env
-   NEXT_PUBLIC_SUPABASE_URL=https://<PROJECT_REF>.supabase.co
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=<ANON_KEY>
-   ```
-
-   Untuk Supabase lokal, gunakan URL dan anon key yang ditampilkan oleh `npx supabase start`. Pada Supabase hosted, nilai tersebut tersedia di **Project Settings → API**.
-
-4. Jalankan aplikasi:
-
-   ```bash
-   npm run dev
-   ```
-
-   Buka [http://localhost:3000](http://localhost:3000).
-
-### Menjadikan akun sebagai admin
-
-Akun baru otomatis mendapat peran pasien. Daftarkan akun terlebih dahulu, lalu ubah peran hanya untuk akun tepercaya melalui SQL Editor Supabase:
-
-```sql
-update public.profiles
-set role = 'admin'
-where email = 'email-admin-anda';
-```
-
-Jangan memberikan peran admin kepada akun yang tidak tepercaya.
-
-## Perintah yang tersedia
+Dari folder project, jalankan:
 
 ```bash
-npm run dev    # Menjalankan server pengembangan
-npm run lint   # Menjalankan ESLint
+npm install
+```
+
+### 2. Siapkan database Supabase
+
+Buat project di [supabase.com](https://supabase.com). Untuk project Supabase baru, migration dapat diterapkan menggunakan Supabase CLI:
+
+```bash
+npx supabase login
+npx supabase link --project-ref <PROJECT_REF>
+npx supabase db push
+```
+
+Ganti `<PROJECT_REF>` dengan project reference dari dashboard Supabase. Perintah `db push` menerapkan migration dari folder `supabase/migrations`.
+
+**Jika tabel sudah pernah dibuat lewat SQL Editor, jangan langsung menjalankan `db push`**: migration awal bisa mencoba membuat tabel yang sudah ada. Terapkan hanya migration yang belum dijalankan, sesuai urutan nama file, atau sinkronkan riwayat migration CLI terlebih dahulu.
+
+### 3. Atur environment variable
+
+Buat file `.env.local` di folder utama project. Ambil Project URL dan anon/publishable key dari **Project Settings → API** di dashboard Supabase:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://<PROJECT_REF>.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=<ANON_KEY>
+```
+
+Jangan gunakan atau membagikan `service_role` key di aplikasi.
+
+### 4. Jalankan aplikasi
+
+```bash
+npm run dev
+```
+
+Buka [http://localhost:3000](http://localhost:3000).
+
+## Membuat akun admin
+
+1. Daftarkan akun melalui halaman aplikasi dan pastikan akun tersebut sudah muncul di **Authentication → Users**.
+2. Jalankan query berikut di Supabase **SQL Editor**, dengan mengganti alamat email contoh:
+
+   ```sql
+   update public.profiles
+   set role = 'admin'
+   where email = 'admin@example.com';
+   ```
+
+3. Login menggunakan email dan password akun yang didaftarkan tadi.
+
+Jangan memberikan peran admin kepada akun yang tidak dipercaya.
+
+## Perintah project
+
+```bash
+npm run dev    # Menjalankan aplikasi untuk pengembangan
+npm run lint   # Memeriksa kode dengan ESLint
 npm run build  # Membuat build produksi
 npm run start  # Menjalankan build produksi
 ```
 
 ## Deploy ke Vercel
 
-1. Impor repository ini ke [Vercel](https://vercel.com/new).
-2. Tambahkan environment variable `NEXT_PUBLIC_SUPABASE_URL` dan `NEXT_PUBLIC_SUPABASE_ANON_KEY` pada pengaturan project Vercel.
-3. Deploy aplikasi.
-4. Di Supabase, buka **Authentication → URL Configuration**:
-   - Atur **Site URL** ke domain produksi.
-   - Tambahkan domain produksi dan `http://localhost:3000/**` ke **Redirect URLs** untuk kebutuhan pengembangan.
-5. Pastikan semua migrasi database telah diterapkan ke project Supabase menggunakan `npx supabase db push`.
+1. Impor repository project ke [Vercel](https://vercel.com/new).
+2. Tambahkan `NEXT_PUBLIC_SUPABASE_URL` dan `NEXT_PUBLIC_SUPABASE_ANON_KEY` di **Project Settings → Environment Variables** pada Vercel.
+3. Pastikan migration database sudah diterapkan ke project Supabase.
+4. Di Supabase, buka **Authentication → URL Configuration**. Atur **Site URL** ke domain Vercel dan tambahkan URL tersebut ke **Redirect URLs**. Untuk pengembangan, tambahkan juga `http://localhost:3000/**`.
+5. Deploy project dari Vercel.
 
-Vercel dapat menjalankan deploy baru secara otomatis setiap kali perubahan didorong ke branch yang terhubung.
+Setelah repository terhubung, perubahan yang didorong ke branch deployment dapat memicu deploy baru secara otomatis.
