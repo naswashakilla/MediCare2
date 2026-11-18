@@ -10,6 +10,8 @@ const navigation = [
   { href: "#about", label: "About Us" },
   { href: "#services", label: "Services" },
   { href: "#doctors", label: "Doctors" },
+  { href: "#dokter-aktif", label: "Dokter Aktif" },
+  { href: "#antrian", label: "Antrian" },
   { href: "#contact", label: "Contact" },
 ];
 

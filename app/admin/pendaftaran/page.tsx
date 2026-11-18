@@ -4,6 +4,7 @@ import { SuccessNotice } from "@/app/_components/success-notice";
 import { requireRole } from "@/utils/auth";
 import { createClient } from "@/utils/supabase/server";
 import { formatDate, formatDateTime, todayISO } from "@/utils/format";
+import { formatNoAntrian } from "@/utils/pendaftaran";
 import { savePendaftaran } from "./actions";
 import { DeletePendaftaranButton } from "./delete-button";
 
@@ -13,6 +14,7 @@ type Registration = {
   id_daftar: number;
   id_pasien: number;
   id_dokter: number;
+  no_antrian: number | null;
   tgl_daftar: string;
   tgl_kunjungan: string;
   keluhan: string | null;
@@ -99,7 +101,7 @@ export default async function PendaftaranAdminPage({
     let registrationQuery = supabase
       .from("pendaftaran")
       .select(
-        "id_daftar,id_pasien,id_dokter,tgl_daftar,tgl_kunjungan,keluhan,status,pasien(nama_pasien),dokter(nama_dokter,poli(nama_poli))",
+        "id_daftar,id_pasien,id_dokter,no_antrian,tgl_daftar,tgl_kunjungan,keluhan,status,pasien(nama_pasien),dokter(nama_dokter,poli(nama_poli))",
         { count: "exact" }
       )
       .order("id_daftar", { ascending: false });
@@ -291,6 +293,9 @@ export default async function PendaftaranAdminPage({
                       </h2>
                       <span className={`rounded-full border px-2.5 py-0.5 text-xs font-semibold ${statusStyles[registration.status]}`}>
                         {statusLabels[registration.status]}
+                      </span>
+                      <span className="rounded-full border border-iced-denim/20 bg-frost px-2.5 py-0.5 text-xs font-bold text-iced-denim-dark">
+                        Antrian {formatNoAntrian(registration.no_antrian)}
                       </span>
                     </div>
                     <p className="mt-1 text-sm text-slate-600">

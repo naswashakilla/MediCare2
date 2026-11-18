@@ -4,7 +4,7 @@ import { SuccessNotice } from "@/app/_components/success-notice";
 import { requireRole } from "@/utils/auth";
 import { createClient } from "@/utils/supabase/server";
 import { formatDate, formatDateTime, todayISO } from "@/utils/format";
-import { MAX_VISITS_PER_DOCTOR_PER_DAY } from "@/utils/pendaftaran";
+import { formatNoAntrian, MAX_VISITS_PER_DOCTOR_PER_DAY } from "@/utils/pendaftaran";
 import { savePendaftaran } from "./actions";
 import { CancelPendaftaranButton } from "./cancel-button";
 import { PendaftaranSubmitButton } from "./submit-button";
@@ -14,6 +14,7 @@ type RegistrationStatus = "menunggu" | "dikonfirmasi" | "selesai" | "dibatalkan"
 type Registration = {
   id_daftar: number;
   id_dokter: number;
+  no_antrian: number | null;
   tgl_daftar: string;
   tgl_kunjungan: string;
   keluhan: string | null;
@@ -49,7 +50,13 @@ const labelClass = "grid gap-1.5 text-sm font-medium text-slate-700";
 export default async function PendaftaranPasienPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string | string[]; page?: string | string[]; notice?: string | string[]; success?: string | string[] }>;
+  searchParams: Promise<{
+    q?: string | string[];
+    page?: string | string[];
+    notice?: string | string[];
+    success?: string | string[];
+    antrian?: string | string[];
+  }>;
 }) {
   const account = await requireRole("pasien");
   const params = await searchParams;
@@ -93,7 +100,7 @@ export default async function PendaftaranPasienPage({
     if (!noDoctorMatch && !listError) {
       let registrationQuery = supabase
         .from("pendaftaran")
-        .select("id_daftar,id_dokter,tgl_daftar,tgl_kunjungan,keluhan,status,dokter(nama_dokter,poli(nama_poli))", {
+        .select("id_daftar,id_dokter,no_antrian,tgl_daftar,tgl_kunjungan,keluhan,status,dokter(nama_dokter,poli(nama_poli))", {
           count: "exact",
         })
         .eq("id_pasien", patient.id_pasien)
@@ -170,6 +177,19 @@ export default async function PendaftaranPasienPage({
         </p>
       )}
       {typeof params.success === "string" && <SuccessNotice message={params.success} />}
+      {typeof params.antrian === "string" && /^A\d+$/.test(params.antrian) && (
+        <section className="rounded-2xl border-2 border-mango bg-mango/15 p-5 text-center sm:p-6">
+          <p className="text-sm font-bold uppercase tracking-[0.14em] text-brilliant">
+            Nomor antrian Anda
+          </p>
+          <p className="mt-2 text-5xl font-extrabold tracking-tight text-navy sm:text-6xl">
+            {params.antrian}
+          </p>
+          <p className="mt-3 text-sm text-navy/70">
+            Simpan nomor ini dan tunjukkan ke petugas saat tiba di klinik sesuai tanggal kunjungan.
+          </p>
+        </section>
+      )}
       {doctorResult.error && (
         <p role="alert" className="rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700">
           Gagal memuat daftar dokter: {doctorResult.error.message}
@@ -236,6 +256,9 @@ export default async function PendaftaranPasienPage({
                         </h2>
                         <span className={`rounded-full border px-2.5 py-0.5 text-xs font-semibold ${statusStyles[registration.status]}`}>
                           {statusLabels[registration.status]}
+                        </span>
+                        <span className="rounded-full border border-brilliant/20 bg-ocean px-2.5 py-0.5 text-xs font-bold text-brilliant">
+                          Antrian {formatNoAntrian(registration.no_antrian)}
                         </span>
                       </div>
                       <p className="mt-1 text-sm text-slate-600">

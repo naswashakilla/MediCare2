@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { createClient } from "@/utils/supabase/server";
+import { statusPraktikDokter, waktuJakarta, type StatusPraktik } from "@/utils/jadwal";
+import { formatNoAntrian } from "@/utils/pendaftaran";
 import { Icon, type IconName } from "./_components/landing/icons";
 import { SiteHeader } from "./_components/landing/site-header";
 
@@ -25,6 +27,26 @@ type Doctor = {
   jam_mulai: string | null;
   jam_selesai: string | null;
   poli: { nama_poli: string } | null;
+};
+
+type DoctorWithStatus = Doctor & { statusPraktik: StatusPraktik };
+
+type QueueStatus = "menunggu" | "dikonfirmasi" | "selesai";
+
+type QueueEntry = {
+  id_daftar: number;
+  no_antrian: number | null;
+  status: QueueStatus;
+  id_dokter: number;
+  nama_dokter: string;
+  nama_poli: string;
+};
+
+type QueueGroup = {
+  id_dokter: number;
+  nama_dokter: string;
+  nama_poli: string;
+  entries: QueueEntry[];
 };
 
 const contact = {
@@ -51,8 +73,21 @@ const serviceTints = [
 const steps = [
   "Masuk atau daftar akun MediCare.",
   "Pilih dokter dan tanggal kunjungan.",
+  "Terima nomor antrian setelah mendaftar.",
   "Datang ke klinik sesuai jadwal.",
 ];
+
+const queueStatusLabels: Record<QueueStatus, string> = {
+  menunggu: "Menunggu",
+  dikonfirmasi: "Berjalan",
+  selesai: "Selesai",
+};
+
+const queueStatusStyles: Record<QueueStatus, string> = {
+  menunggu: "text-amber-700",
+  dikonfirmasi: "text-brilliant",
+  selesai: "text-emerald-700",
+};
 
 function formatSchedule(doctor: Doctor) {
   const start = doctor.jam_mulai?.slice(0, 5);
@@ -133,12 +168,17 @@ export default async function Home() {
   const { data: claims } = await supabase.auth.getClaims();
   const userId = claims?.claims?.sub;
 
-  const [poliResult, doctorResult] = await Promise.all([
+  const [poliResult, doctorResult, queueResult] = await Promise.all([
     supabase.from("poli").select("id_poli,nama_poli,keterangan").order("nama_poli"),
     supabase
       .from("dokter")
       .select("id_dokter,nama_dokter,spesialis,hari_praktik,jam_mulai,jam_selesai,poli(nama_poli)")
       .order("nama_dokter"),
+    supabase
+      .from("antrian_hari_ini")
+      .select("id_daftar,no_antrian,status,id_dokter,nama_dokter,nama_poli")
+      .order("nama_dokter")
+      .order("no_antrian"),
   ]);
 
   let dashboardHref: string | null = null;
@@ -156,10 +196,42 @@ export default async function Home() {
 
   const polis = (poliResult.data ?? []) as Poli[];
   const doctors = (doctorResult.data ?? []) as unknown as Doctor[];
-  const hasDataError = Boolean(poliResult.error || doctorResult.error);
+  const hasPoliError = Boolean(poliResult.error);
+  const hasDoctorError = Boolean(doctorResult.error);
+  const hasQueueError = Boolean(queueResult.error);
 
   const doctorCount = doctors.length > 0 ? String(doctors.length) : "—";
   const poliCount = polis.length > 0 ? String(polis.length) : "—";
+
+  const waktu = waktuJakarta();
+  const doctorsWithStatus: DoctorWithStatus[] = doctors.map((doctor) => ({
+    ...doctor,
+    statusPraktik: statusPraktikDokter(doctor, waktu),
+  }));
+  const activeDoctors = doctorsWithStatus.filter((doctor) => doctor.statusPraktik === "praktik");
+  const scheduledToday = doctorsWithStatus.filter((doctor) => doctor.statusPraktik !== "tidak-praktik");
+  const doctorsToShow = activeDoctors.length > 0 ? activeDoctors : scheduledToday;
+
+  const queueEntries = (queueResult.data ?? []) as QueueEntry[];
+  const queueGroups: QueueGroup[] = [];
+  const queueGroupById = new Map<number, QueueGroup>();
+  for (const entry of queueEntries) {
+    let group = queueGroupById.get(entry.id_dokter);
+    if (!group) {
+      group = {
+        id_dokter: entry.id_dokter,
+        nama_dokter: entry.nama_dokter,
+        nama_poli: entry.nama_poli,
+        entries: [],
+      };
+      queueGroupById.set(entry.id_dokter, group);
+      queueGroups.push(group);
+    }
+    group.entries.push(entry);
+  }
+  const totalAntrian = queueEntries.length;
+  const antrianBerjalan = queueEntries.filter((entry) => entry.status === "dikonfirmasi").length;
+  const antrianSelesai = queueEntries.filter((entry) => entry.status === "selesai").length;
 
   const appointmentHref =
     dashboardHref === "/pasien"
@@ -354,9 +426,146 @@ export default async function Home() {
               </div>
             ) : (
               <p className="mt-10 rounded-lg border-2 border-dashed border-white/30 p-8 text-center text-base text-white/80">
-                {hasDataError
+                {hasDoctorError
                   ? "Data dokter belum dapat dimuat. Silakan muat ulang halaman."
                   : "Belum ada dokter yang ditambahkan admin."}
+              </p>
+            )}
+          </div>
+        </section>
+
+        {/* Dokter aktif */}
+        <section id="dokter-aktif" className="scroll-mt-24 bg-white py-16 sm:py-20">
+          <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+            <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+              <SectionHeading
+                eyebrow="Dokter Aktif"
+                title="Sedang praktik hari ini"
+                description={`Per ${waktu.tanggalLabel} pukul ${waktu.jamLabel} WIB. Status mengikuti hari dan jam praktik yang terdaftar.`}
+              />
+              <div className="inline-flex w-fit items-center gap-2.5 rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-bold text-emerald-800">
+                <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-500" />
+                {activeDoctors.length} dokter aktif
+              </div>
+            </div>
+
+            {activeDoctors.length === 0 && scheduledToday.length > 0 && (
+              <p className="mt-6 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+                Belum ada dokter yang sedang praktik saat ini. Berikut dokter yang terjadwal hari ini.
+              </p>
+            )}
+
+            {doctorsToShow.length > 0 ? (
+              <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {doctorsToShow.map((doctor) => (
+                  <article key={doctor.id_dokter} className="rounded-lg border-2 border-ocean bg-white p-5">
+                    <div className="flex items-start gap-4">
+                      <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-brilliant text-lg font-extrabold text-white">
+                        {doctorInitials(doctor.nama_dokter)}
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-start justify-between gap-2">
+                          <h3 className="truncate text-lg font-bold text-navy">{doctor.nama_dokter}</h3>
+                          <span
+                            className={`shrink-0 rounded-full px-2 py-1 text-[11px] font-bold ${
+                              doctor.statusPraktik === "praktik"
+                                ? "bg-emerald-50 text-emerald-700"
+                                : "bg-amber-50 text-amber-700"
+                            }`}
+                          >
+                            {doctor.statusPraktik === "praktik" ? "Aktif" : "Akan datang"}
+                          </span>
+                        </div>
+                        <p className="mt-1 text-sm font-semibold text-brilliant">
+                          {doctor.spesialis || "Dokter umum"}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="mt-4 space-y-2 border-t-2 border-ocean pt-4 text-sm text-navy/70">
+                      <p className="flex items-center gap-2">
+                        <Icon name="building" className="h-4 w-4 shrink-0 text-brilliant" />
+                        {doctor.poli?.nama_poli ?? "Poli MediCare"}
+                      </p>
+                      <p className="flex items-center gap-2">
+                        <Icon name="clock" className="h-4 w-4 shrink-0 text-brilliant" />
+                        {formatSchedule(doctor)}
+                      </p>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            ) : (
+              <p className="mt-10 rounded-lg border-2 border-dashed border-brilliant/25 bg-white p-8 text-center text-base text-navy/60">
+                {hasDoctorError
+                  ? "Status dokter belum dapat dimuat. Silakan muat ulang halaman."
+                  : "Belum ada dokter yang praktik hari ini."}
+              </p>
+            )}
+          </div>
+        </section>
+
+        {/* Antrian hari ini */}
+        <section id="antrian" className="scroll-mt-24 bg-ocean/60 py-16 sm:py-20">
+          <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+            <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+              <SectionHeading
+                eyebrow="Antrian Hari Ini"
+                title="Pantau antrian kunjungan"
+                description="Nomor antrian pasien yang mendaftar untuk kunjungan hari ini, dikelompokkan per dokter."
+              />
+              <div className="flex flex-wrap gap-2">
+                <div className="min-w-20 rounded-lg bg-white px-4 py-2 text-center">
+                  <span className="block text-xl font-extrabold text-navy">{totalAntrian}</span>
+                  <span className="text-xs font-semibold text-navy/60">Total</span>
+                </div>
+                <div className="min-w-20 rounded-lg bg-white px-4 py-2 text-center">
+                  <span className="block text-xl font-extrabold text-brilliant">{antrianBerjalan}</span>
+                  <span className="text-xs font-semibold text-navy/60">Berjalan</span>
+                </div>
+                <div className="min-w-20 rounded-lg bg-white px-4 py-2 text-center">
+                  <span className="block text-xl font-extrabold text-emerald-700">{antrianSelesai}</span>
+                  <span className="text-xs font-semibold text-navy/60">Selesai</span>
+                </div>
+              </div>
+            </div>
+
+            {queueGroups.length > 0 ? (
+              <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {queueGroups.map((group) => (
+                  <article key={group.id_dokter} className="rounded-2xl border-2 border-white bg-white p-5">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <h3 className="truncate font-bold text-navy">{group.nama_dokter}</h3>
+                        <p className="mt-0.5 text-sm text-navy/60">{group.nama_poli}</p>
+                      </div>
+                      <span className="shrink-0 rounded-lg bg-ocean px-2.5 py-1 text-xs font-bold text-brilliant">
+                        {group.entries.length} antrian
+                      </span>
+                    </div>
+                    <div className="mt-4 flex flex-wrap gap-2 border-t-2 border-ocean pt-4">
+                      {group.entries.map((entry) => (
+                        <div
+                          key={entry.id_daftar}
+                          className="min-w-[4.5rem] rounded-lg border border-ocean bg-frost/50 px-2.5 py-2 text-center"
+                        >
+                          <span className="block text-base font-extrabold text-brilliant">
+                            {formatNoAntrian(entry.no_antrian)}
+                          </span>
+                          <span className={`mt-1 block text-[10px] font-semibold ${queueStatusStyles[entry.status]}`}>
+                            {queueStatusLabels[entry.status]}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </article>
+                ))}
+              </div>
+            ) : (
+              <p className="mt-10 rounded-lg border-2 border-dashed border-brilliant/25 bg-white p-8 text-center text-base text-navy/60">
+                {hasQueueError
+                  ? "Data antrian belum dapat dimuat. Silakan muat ulang halaman."
+                  : "Belum ada antrian untuk hari ini."}
               </p>
             )}
           </div>
@@ -394,7 +603,7 @@ export default async function Home() {
               </div>
             ) : (
               <p className="mt-10 rounded-lg border-2 border-dashed border-brilliant/25 bg-white p-8 text-center text-base text-navy/60">
-                {hasDataError
+                {hasPoliError
                   ? "Data layanan belum dapat dimuat. Silakan muat ulang halaman."
                   : "Belum ada layanan yang ditambahkan admin."}
               </p>
@@ -568,6 +777,8 @@ export default async function Home() {
                   { href: "#about", label: "About Us" },
                   { href: "#services", label: "Services" },
                   { href: "#doctors", label: "Doctors" },
+                  { href: "#dokter-aktif", label: "Dokter Aktif" },
+                  { href: "#antrian", label: "Antrian" },
                   { href: "#contact", label: "Contact" },
                 ].map((item) => (
                   <li key={item.href}>

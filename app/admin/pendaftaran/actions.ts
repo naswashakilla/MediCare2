@@ -116,6 +116,7 @@ export async function savePendaftaran(formData: FormData) {
   if (result.error) showNotice(`Gagal menyimpan pendaftaran: ${result.error.message}`);
   if (!result.data) showNotice("Data pendaftaran tidak ditemukan.");
 
+  revalidatePath("/");
   revalidatePath("/admin");
   revalidatePath("/admin/pendaftaran");
   revalidatePath("/pasien");
@@ -137,6 +138,7 @@ export async function deletePendaftaran(formData: FormData) {
   if (error) showNotice(`Gagal menghapus pendaftaran: ${error.message}`);
   if (!data) showNotice("Data pendaftaran tidak ditemukan.");
 
+  revalidatePath("/");
   revalidatePath("/admin");
   revalidatePath("/admin/pendaftaran");
   revalidatePath("/pasien");
