@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { requireRole } from "@/utils/auth";
 import { createClient } from "@/utils/supabase/server";
-import { MAX_VISITS_PER_DOCTOR_PER_DAY } from "@/utils/pendaftaran";
+import { formatNoAntrian, MAX_VISITS_PER_DOCTOR_PER_DAY } from "@/utils/pendaftaran";
 
 const registrationSchema = z.object({
   id_pasien: z.coerce.number().int().positive("Pilih pasien yang valid"),
@@ -105,8 +105,8 @@ export async function savePendaftaran(formData: FormData) {
   };
 
   const result = id
-    ? await supabase.from("pendaftaran").update(payload).eq("id_daftar", Number(id)).select("id_daftar").maybeSingle()
-    : await supabase.from("pendaftaran").insert(payload).select("id_daftar").single();
+    ? await supabase.from("pendaftaran").update(payload).eq("id_daftar", Number(id)).select("id_daftar,no_antrian,status").maybeSingle()
+    : await supabase.from("pendaftaran").insert(payload).select("id_daftar,no_antrian,status").single();
   if (result.error?.code === "P0001" && result.error.message.toLowerCase().includes("sudah terdaftar")) {
     showNotice("Pasien sudah memiliki pendaftaran aktif pada dokter dan tanggal tersebut.");
   }
@@ -120,6 +120,10 @@ export async function savePendaftaran(formData: FormData) {
   revalidatePath("/admin");
   revalidatePath("/admin/pendaftaran");
   revalidatePath("/pasien");
+  revalidatePath("/pasien/pendaftaran");
+  if (result.data.status === "dikonfirmasi" && result.data.no_antrian !== null) {
+    showSuccess(`Pendaftaran dikonfirmasi. Nomor antrean: ${formatNoAntrian(result.data.no_antrian)}.`);
+  }
   showSuccess(id ? "Perubahan pendaftaran berhasil disimpan." : "Pendaftaran berhasil ditambahkan.");
 }
 

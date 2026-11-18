@@ -18,7 +18,7 @@ MediCare adalah aplikasi web poliklinik yang saya buat untuk membantu mengelola 
 - Membuat akun dan mengelola profil.
 - Melihat informasi dokter dan poli.
 - Membuat pendaftaran kunjungan, melihat riwayat, mengubah pendaftaran yang masih menunggu, atau membatalkannya.
-- Melihat nomor antrean kunjungan.
+- Mendapat nomor antrean setelah admin mengonfirmasi pendaftaran.
 
 ## Teknologi
 

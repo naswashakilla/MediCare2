@@ -534,7 +534,7 @@ export default async function Home() {
                       Antrean Hari Ini
                     </h2>
                     <p className="mt-2 text-sm leading-6 text-navy/70">
-                      Nomor antrean pasien yang mendaftar untuk kunjungan hari ini.
+                      Nomor antrean pasien yang pendaftarannya sudah dikonfirmasi untuk hari ini.
                     </p>
                   </div>
                   <div className="flex gap-1.5 rounded-2xl bg-[#edf4ff] p-2 text-center">

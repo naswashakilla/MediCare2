@@ -257,9 +257,15 @@ export default async function PendaftaranPasienPage({
                         <span className={`rounded-full border px-2.5 py-0.5 text-xs font-semibold ${statusStyles[registration.status]}`}>
                           {statusLabels[registration.status]}
                         </span>
-                        <span className="rounded-full border border-brilliant/20 bg-ocean px-2.5 py-0.5 text-xs font-bold text-brilliant">
-                          Antrian {formatNoAntrian(registration.no_antrian)}
-                        </span>
+                        {registration.no_antrian !== null ? (
+                          <span className="rounded-full border border-brilliant/20 bg-ocean px-2.5 py-0.5 text-xs font-bold text-brilliant">
+                            Antrian {formatNoAntrian(registration.no_antrian)}
+                          </span>
+                        ) : (
+                          <span className="rounded-full border border-amber-200 bg-amber-50 px-2.5 py-0.5 text-xs font-semibold text-amber-800">
+                            Nomor antrean setelah konfirmasi
+                          </span>
+                        )}
                       </div>
                       <p className="mt-1 text-sm text-slate-600">
                         {registration.dokter?.poli?.nama_poli ?? "Poli tidak diketahui"} · Kunjungan:{" "}
