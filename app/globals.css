@@ -9,14 +9,12 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
 
-  /* Palette baru MediCare */
   --color-sunset: #f36b2e;
   --color-mango: #f59a1e;
   --color-ocean: #c4e7e5;
   --color-brilliant: #253c96;
   --color-navy: #19244e;
 
-  /* Alias lama: dipakai halaman login & dashboard agar tetap berjalan */
   --color-pistachio: #f59a1e;
   --color-frost: #c4e7e5;
   --color-iced-denim: #253c96;

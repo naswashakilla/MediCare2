@@ -6,13 +6,13 @@ import { useEffect, useState } from "react";
 import { Icon } from "./icons";
 
 const navigation = [
-  { href: "#home", label: "Home" },
-  { href: "#about", label: "About Us" },
-  { href: "#services", label: "Services" },
-  { href: "#doctors", label: "Doctors" },
+  { href: "#home", label: "Beranda" },
+  { href: "#about", label: "Tentang Kami" },
+  { href: "#services", label: "Layanan" },
+  { href: "#doctors", label: "Dokter" },
   { href: "#dokter-aktif", label: "Dokter Aktif" },
-  { href: "#antrian", label: "Antrian" },
-  { href: "#contact", label: "Contact" },
+  { href: "#antrian", label: "Antrean" },
+  { href: "#contact", label: "Kontak" },
 ];
 
 type SiteHeaderProps = {
@@ -22,7 +22,7 @@ type SiteHeaderProps = {
 
 export function SiteHeader({ dashboardHref, appointmentHref }: SiteHeaderProps) {
   const [open, setOpen] = useState(false);
-  const accountLabel = dashboardHref ? "Dashboard" : "Login";
+  const accountLabel = dashboardHref ? "Dasbor" : "Masuk";
   const accountHref = dashboardHref ?? "/login";
 
   useEffect(() => {
@@ -73,7 +73,7 @@ export function SiteHeader({ dashboardHref, appointmentHref }: SiteHeaderProps) 
             className="inline-flex items-center gap-2 rounded-lg bg-brilliant px-4 py-2.5 text-sm font-bold text-white transition-colors hover:bg-navy"
           >
             <Icon name="calendar" className="h-4 w-4" />
-            Book Appointment
+            Daftar Kunjungan
           </Link>
         </div>
 
@@ -117,7 +117,7 @@ export function SiteHeader({ dashboardHref, appointmentHref }: SiteHeaderProps) 
               className="flex items-center justify-center gap-2 rounded-lg bg-brilliant px-4 py-3 text-base font-bold text-white transition-colors hover:bg-navy"
             >
               <Icon name="calendar" className="h-5 w-5" />
-              Book Appointment
+              Daftar Kunjungan
             </Link>
           </div>
         </div>
