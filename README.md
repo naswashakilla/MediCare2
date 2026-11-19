@@ -109,3 +109,61 @@ npm run start  # Menjalankan build produksi
 5. Deploy project dari Vercel.
 
 Setelah repository terhubung, perubahan yang didorong ke branch deployment dapat memicu deploy baru secara otomatis.
+
+## Tangkapan layar
+
+Screenshot aplikasi berada di folder `public/images` dan dikelompokkan berdasarkan jenis pengguna.
+
+### Pengunjung dan akun
+
+#### Landing page
+
+![Landing page MediCare](./public/images/landingpage.png)
+
+#### Pendaftaran akun pasien
+
+![Form pendaftaran akun pasien](./public/images/daftarakun.png)
+
+#### Halaman masuk pasien dan admin
+
+![Halaman masuk](./public/images/loginadmin.png)
+
+### Pasien
+
+#### Dashboard pasien
+
+![Dashboard pasien](./public/images/dashboardpasien.png)
+
+#### Profil pasien
+
+![Halaman profil pasien](./public/images/profilpasien.png)
+
+#### Pendaftaran dan riwayat kunjungan
+
+![Halaman pendaftaran pasien](./public/images/pendaftaranpasien.png)
+
+### Admin
+
+#### Dashboard admin
+
+![Dashboard admin](./public/images/dashboardadmin.png)
+
+#### Mengelola poli
+
+![Halaman pengelolaan poli](./public/images/kelolapoli.png)
+
+#### Mengelola dokter
+
+![Halaman pengelolaan dokter](./public/images/keloladokter.png)
+
+#### Mengelola pasien
+
+![Halaman pengelolaan pasien](./public/images/kelolapasien.png)
+
+#### Mengelola pendaftaran
+
+![Halaman pengelolaan pendaftaran](./public/images/kelolapendaftaran.png)
+
+#### Laporan pendaftaran
+
+![Halaman laporan admin](./public/images/laporanadmin.png)
